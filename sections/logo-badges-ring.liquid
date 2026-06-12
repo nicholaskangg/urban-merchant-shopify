@@ -1,0 +1,278 @@
+{% comment %}
+  Section: Logo Badges with Circular Ring Text (blocks)
+  File: sections/logo-badges-ring.liquid
+{% endcomment %}
+
+{%- style -%}
+  .logo-badges-{{ section.id }}{
+    --gap: {{ section.settings.gap }}px;
+    --logo-max-height: {{ section.settings.logo_max_height }}px;
+    --ring-font-size: {{ section.settings.ring_font_size }}px;
+    --ring-letter-spacing: {{ section.settings.ring_letter_spacing }}px;
+    --ring-inset: {{ section.settings.ring_inset }}px;
+    --ring-color: {{ section.settings.ring_color }};
+    --ring-weight: {{ section.settings.ring_font_weight }};
+  }
+
+  .logo-badges-{{ section.id }} .logo-badges__wrap{
+    display:flex;
+    flex-wrap:wrap;
+    gap:var(--gap);
+    align-items:center;
+    justify-content: {{ section.settings.align }};
+  }
+
+  .logo-badges-{{ section.id }} .logo-badge{
+    position:relative;
+    display:inline-grid;
+    place-items:center;
+    line-height:0;
+  }
+
+  .logo-badges-{{ section.id }} .logo-badge__link{
+    display:inline-grid;
+    place-items:center;
+    text-decoration:none;
+  }
+
+  .logo-badges-{{ section.id }} .logo-badge__img{
+    display:block;
+    max-height:var(--logo-max-height);
+    width:auto;
+    height:auto;
+    border-radius:999px;
+    position:relative;
+    z-index:1;
+  }
+
+  .logo-badges-{{ section.id }} .logo-badge__ring{
+    position:absolute;
+    inset:calc(var(--ring-inset) * -1);
+    z-index:2;
+    pointer-events:none;
+  }
+
+  .logo-badges-{{ section.id }} .logo-badge__text{
+    font-size:var(--ring-font-size);
+    letter-spacing:var(--ring-letter-spacing);
+    text-transform:uppercase;
+    fill:var(--ring-color);
+    font-weight:var(--ring-weight);
+  }
+
+  /* Optional: stack in mobile */
+  @media (max-width: 749px){
+    .logo-badges-{{ section.id }} .logo-badges__wrap{
+      flex-direction: {% if section.settings.stack_mobile %}column{% else %}row{% endif %};
+    }
+  }
+{%- endstyle -%}
+
+<div class="logo-badges-{{ section.id }} color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <h2 class="h2">{{ section.settings.title }}</h2>
+    {%- endif -%}
+
+    <div class="logo-badges__wrap" role="list" aria-label="Logo badges">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'badge' and block.settings.image != blank -%}
+          {%- liquid
+            assign ring_id = 'ringPath-' | append: section.id | append: '-' | append: block.id
+          -%}
+
+          <div class="logo-badge" role="listitem" {{ block.shopify_attributes }}>
+            {%- if block.settings.link != blank -%}
+              <a class="logo-badge__link" href="{{ block.settings.link }}" {% if block.settings.new_tab %}target="_blank" rel="noopener"{% endif %}>
+                {{
+                  block.settings.image
+                  | image_url: width: 400
+                  | image_tag:
+                    class: 'logo-badge__img',
+                    loading: 'lazy',
+                    alt: block.settings.alt_text | default: block.settings.image.alt | escape
+                }}
+              </a>
+            {%- else -%}
+              {{
+                block.settings.image
+                | image_url: width: 400
+                | image_tag:
+                  class: 'logo-badge__img',
+                  loading: 'lazy',
+                  alt: block.settings.alt_text | default: block.settings.image.alt | escape
+              }}
+            {%- endif -%}
+
+            {%- if block.settings.ring_text != blank -%}
+              <svg class="logo-badge__ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                <defs>
+                  <!-- Path starts at 6 o'clock; startOffset=50% makes 12 o'clock the midpoint -->
+                  <path id="{{ ring_id }}" d="M50,50 m0,42 a42,42 0 1,1 0,-84 a42,42 0 1,1 0,84"></path>
+                </defs>
+                <text class="logo-badge__text" text-anchor="middle">
+                  <textPath href="#{{ ring_id }}" xlink:href="#{{ ring_id }}" startOffset="50%">
+                    {{ block.settings.ring_text | escape }}
+                  </textPath>
+                </text>
+              </svg>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Logo badges (ring text)",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 50,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "Certified & Partnered"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Alignment",
+      "default": "center",
+      "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Spacing between badges",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "logo_max_height",
+      "label": "Logo max height",
+      "min": 20,
+      "max": 140,
+      "step": 2,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "ring_inset",
+      "label": "Ring distance from logo",
+      "min": 6,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "ring_font_size",
+      "label": "Ring font size",
+      "min": 8,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "ring_letter_spacing",
+      "label": "Ring letter spacing",
+      "min": 0,
+      "max": 6,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "ring_color",
+      "label": "Ring text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "ring_font_weight",
+      "label": "Ring font weight",
+      "default": "600",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "label": "Stack badges on mobile",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Badge",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Logo image"
+        },
+        {
+          "type": "text",
+          "id": "ring_text",
+          "label": "Ring text",
+          "default": "CERTIFIED SHIMANO TECHNICIAN • "
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Alt text (optional)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        },
+        {
+          "type": "checkbox",
+          "id": "new_tab",
+          "label": "Open link in new tab",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Logo badges (ring text)",
+      "blocks": [
+        { "type": "badge" },
+        { "type": "badge" },
+        { "type": "badge" }
+      ]
+    }
+  ]
+}
+{% endschema %}

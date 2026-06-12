@@ -1,0 +1,309 @@
+{%- doc -%}
+  Full-width secondary navigation bar revealed on hover/tap of a top-level header link
+  (default "Shop"). Renders a category row from section.settings.submenu_menu. Any top-level
+  link in that menu that HAS child links is rendered as an outlined dropdown "pill" (e.g.
+  "Routines") whose children appear as a numbered concern panel. A search icon opens the
+  theme search drawer.
+
+  @param {object} section - Header section (reads section.settings.submenu_*)
+{%- enddoc -%}
+
+{%- liquid
+  assign menu = section.settings.submenu_menu
+  assign render_submenu = false
+  if section.settings.submenu_enable and menu != blank and menu.links.size > 0
+    assign render_submenu = true
+  endif
+  assign trigger = section.settings.submenu_trigger | default: 'Shop'
+  assign routines_menu = section.settings.submenu_routines_menu
+  assign routines_label = section.settings.submenu_routines_label | default: 'Routines'
+-%}
+
+{%- if render_submenu -%}
+<style>
+  #shopify-section-{{ section.id }} {
+    --submenu-bg: {{ section.settings.submenu_color_background.rgb }};
+    --submenu-fg: {{ section.settings.submenu_color_text.rgb }};
+  }
+  .shop-submenu {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    width: 100%;
+    z-index: 15;
+    background-color: rgb(var(--submenu-bg));
+    color: rgb(var(--submenu-fg));
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.5rem);
+    transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s linear 0.22s;
+    pointer-events: none;
+  }
+  /* Invisible hover bridge across the gap between the trigger and the bar,
+     so moving the cursor down (even slowly) keeps the menu open. */
+  .shop-submenu::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 3rem;
+  }
+  .shop-submenu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s;
+    pointer-events: auto;
+  }
+  .shop-submenu__inner {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    min-height: 3.5rem;
+    padding-block: 0.5rem;
+  }
+  .shop-submenu__link,
+  .shop-submenu__pill {
+    font-family: var(--font-navigation-family);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(var(--submenu-fg));
+    white-space: nowrap;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    line-height: 1;
+    transition: opacity 0.18s ease;
+  }
+  .shop-submenu__link { position: relative; padding-block: 0.5rem; }
+  .shop-submenu__link:hover { opacity: 0.6; }
+  .shop-submenu__link.is-active::after,
+  .shop-submenu__link[aria-current]::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.1rem;
+    height: 1px;
+    background-color: currentColor;
+  }
+  /* Routines outlined pill + its concern panel */
+  .shop-submenu__group { position: relative; }
+  .shop-submenu__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid rgb(var(--submenu-fg) / 0.5);
+    border-radius: 999px;
+  }
+  .shop-submenu__pill svg { transition: transform 0.2s ease; }
+  .shop-submenu__group.is-open .shop-submenu__pill svg { transform: rotate(180deg); }
+  .shop-submenu__panel {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 0.75rem);
+    min-width: 18rem;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(var(--submenu-bg));
+    border: 1px solid rgb(var(--submenu-fg) / 0.18);
+    padding: 0.5rem 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.4rem);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+  }
+  .shop-submenu__group.is-open .shop-submenu__panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s;
+  }
+  .shop-submenu__concern {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr 2.5rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1.25rem;
+    color: rgb(var(--submenu-fg));
+    transition: background-color 0.18s ease;
+  }
+  .shop-submenu__concern:hover { background-color: rgb(var(--submenu-fg) / 0.06); }
+  .shop-submenu__concern-num { font-size: 0.7rem; opacity: 0.6; letter-spacing: 0.05em; }
+  .shop-submenu__concern-label { font-size: 0.95rem; }
+  .shop-submenu__concern-arrow { justify-self: end; opacity: 0; transform: translateX(-0.4rem); transition: opacity 0.18s ease, transform 0.18s ease; }
+  .shop-submenu__concern:hover .shop-submenu__concern-arrow { opacity: 1; transform: translateX(0); }
+  .shop-submenu__search {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: rgb(var(--submenu-fg));
+    transition: opacity 0.18s ease;
+  }
+  .shop-submenu__search:hover { opacity: 0.6; }
+  /* Active trigger underline in the top nav */
+  .header .header__navigation .is-trigger-active { opacity: 1; }
+
+  /* Desktop: center the category row, pin search to the right edge.
+     A flexible left spacer balances the search on the right so the
+     categories stay centered; search remains a flex child (aligned
+     vertically by align-items: center). */
+  @media screen and (min-width: 1024px) {
+    .shop-submenu__inner {
+      justify-content: center;
+    }
+    .shop-submenu__inner::before {
+      content: '';
+      flex: 1 1 0;
+    }
+    .shop-submenu__search {
+      flex: 1 1 0;
+      justify-content: flex-end;
+    }
+  }
+
+  @media screen and (max-width: 1023px) {
+    .shop-submenu__inner {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 1.25rem;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+</style>
+
+<shop-submenu class="shop-submenu" data-trigger="{{ trigger | escape }}" aria-label="{{ trigger | escape }} categories">
+  <div class="shop-submenu__inner page-width{% if section.settings.full_width %} page-width--full{% endif %}">
+    {%- if routines_menu != blank and routines_menu.links.size > 0 -%}
+      <div class="shop-submenu__group">
+        <button type="button" class="shop-submenu__pill" data-routines-toggle aria-expanded="false">
+          {{- routines_label | escape -}}
+          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" fill="none" aria-hidden="true"><path stroke="currentColor" d="m1 1 4 4 4-4"/></svg>
+        </button>
+        <div class="shop-submenu__panel" role="menu">
+          {%- for child in routines_menu.links -%}
+            <a href="{{ child.url }}" class="shop-submenu__concern" role="menuitem">
+              <span class="shop-submenu__concern-num">{%- assign n = forloop.index -%}{%- if n < 10 -%}0{{ n }}{%- else -%}{{ n }}{%- endif -%}</span>
+              <span class="shop-submenu__concern-label">{{ child.title | escape }}</span>
+              <span class="shop-submenu__concern-arrow" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="8" fill="none"><path fill="currentColor" d="M35.354 4.354a.5.5 0 0 0 0-.708L32.172.464a.5.5 0 1 0-.707.708L34.293 4l-2.828 2.828a.5.5 0 1 0 .707.708zM0 4.5h35v-1H0z"/></svg>
+              </span>
+            </a>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- for link in menu.links -%}
+      {%- if link.links != blank -%}
+        <div class="shop-submenu__group">
+          <button type="button" class="shop-submenu__pill" data-routines-toggle aria-expanded="false">
+            {{- link.title | escape -}}
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" fill="none" aria-hidden="true"><path stroke="currentColor" d="m1 1 4 4 4-4"/></svg>
+          </button>
+          <div class="shop-submenu__panel" role="menu">
+            {%- for child in link.links -%}
+              <a href="{{ child.url }}" class="shop-submenu__concern" role="menuitem">
+                <span class="shop-submenu__concern-num">{%- assign n = forloop.index -%}{%- if n < 10 -%}0{{ n }}{%- else -%}{{ n }}{%- endif -%}</span>
+                <span class="shop-submenu__concern-label">{{ child.title | escape }}</span>
+                <span class="shop-submenu__concern-arrow" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="8" fill="none"><path fill="currentColor" d="M35.354 4.354a.5.5 0 0 0 0-.708L32.172.464a.5.5 0 1 0-.707.708L34.293 4l-2.828 2.828a.5.5 0 1 0 .707.708zM0 4.5h35v-1H0z"/></svg>
+                </span>
+              </a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- else -%}
+        <a href="{{ link.url }}" class="shop-submenu__link{% if link.current %} is-active{% endif %}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if section.settings.submenu_show_search and settings.enable_search -%}
+      <a href="{{ routes.search_url }}" class="shop-submenu__search" is="magnet-link" aria-controls="SearchDrawer" aria-expanded="false">
+        <span class="sr-only">{{ 'general.search.title' | t }}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-miterlimit="10" d="M9.096 17.035c4.471 0 8.096-3.59 8.096-8.018C17.192 4.59 13.567 1 9.096 1S1 4.59 1 9.017c0 4.428 3.625 8.018 8.096 8.018ZM14.91 14.506l7.113 7.049"/></svg>
+      </a>
+    {%- endif -%}
+  </div>
+</shop-submenu>
+
+<script>
+  if (!customElements.get('shop-submenu')) {
+    customElements.define('shop-submenu', class extends HTMLElement {
+      connectedCallback() {
+        this.trigger = (this.dataset.trigger || '').trim().toLowerCase();
+        this.header = this.closest('.header');
+        this.closeTimer = null;
+        this.mql = window.matchMedia('(min-width: 1024px)');
+        this.bindTrigger();
+        this.addEventListener('mouseenter', () => this.cancelClose());
+        this.addEventListener('mouseleave', () => this.scheduleClose());
+        this.bindRoutines();
+        this._onDocClick = (e) => { if (!this.contains(e.target) && e.target !== this.triggerEl) this.close(); };
+        this._onKey = (e) => { if (e.key === 'Escape') this.close(); };
+        document.addEventListener('keydown', this._onKey);
+      }
+      disconnectedCallback() {
+        document.removeEventListener('keydown', this._onKey);
+        document.removeEventListener('click', this._onDocClick);
+      }
+      findTriggerEl() {
+        if (!this.header) return null;
+        const els = this.header.querySelectorAll('.header__navigation a, .header__navigation summary');
+        let match = null;
+        els.forEach((el) => {
+          const t = (el.textContent || '').trim().toLowerCase();
+          if (!match && this.trigger && t === this.trigger) match = el;
+        });
+        return match || this.header.querySelector('.header__navigation a');
+      }
+      bindTrigger() {
+        const el = this.findTriggerEl();
+        if (!el) return;
+        this.triggerEl = el;
+        const li = el.closest('li') || el;
+        li.addEventListener('mouseenter', () => { if (this.mql.matches) this.open(); });
+        li.addEventListener('mouseleave', () => { if (this.mql.matches) this.scheduleClose(); });
+        el.addEventListener('click', (e) => {
+          if (!this.mql.matches) { e.preventDefault(); this.toggle(); }
+        });
+      }
+      bindRoutines() {
+        this.querySelectorAll('[data-routines-toggle]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const group = btn.closest('.shop-submenu__group');
+            const open = group.classList.toggle('is-open');
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          });
+        });
+      }
+      open() {
+        this.cancelClose();
+        this.classList.add('is-open');
+        if (this.triggerEl) this.triggerEl.classList.add('is-trigger-active');
+        document.addEventListener('click', this._onDocClick);
+      }
+      close() {
+        this.classList.remove('is-open');
+        this.querySelectorAll('.shop-submenu__group.is-open').forEach((g) => {
+          g.classList.remove('is-open');
+          const b = g.querySelector('[data-routines-toggle]');
+          if (b) b.setAttribute('aria-expanded', 'false');
+        });
+        if (this.triggerEl) this.triggerEl.classList.remove('is-trigger-active');
+        document.removeEventListener('click', this._onDocClick);
+      }
+      toggle() { this.classList.contains('is-open') ? this.close() : this.open(); }
+      scheduleClose() { this.cancelClose(); this.closeTimer = setTimeout(() => this.close(), 280); }
+      cancelClose() { if (this.closeTimer) { clearTimeout(this.closeTimer); this.closeTimer = null; } }
+    });
+  }
+</script>
+{%- endif -%}
