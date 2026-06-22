@@ -1,33 +1,53 @@
-/* Homepage stacking-sections scroll effect:
-   each section sticks at top:0 and later sections (higher DOM order)
-   naturally paint on top, creating a "card slides over card" effect. */
-.main-content > .shopify-section:nth-child(2) {
+/* Homepage stacking-sections scroll effect.
+   homepage-stack.js wraps four homepage sections in .stacking-container:
+     [ s1  s2  s3  s4 ]
+   s1–s3 peek-stack via the sticky rules below. s4 is the non-sticky "pusher"
+   that drives the whole stack up and off together (the leave-together exit is
+   handled in JS) and also provides s3 its sticky runway. */
+
+.stacking-container {
+  position: relative;
+  display: block;
+}
+
+/* Card 1 (was .main-content > .shopify-section:nth-child(2)) */
+.stacking-container > .shopify-section:nth-child(1) {
   position: -webkit-sticky;
   position: sticky;
   top: var(--header-height);
 }
-.main-content > .shopify-section:nth-child(3) {
+
+/* Card 2 (was nth-child(3)) */
+.stacking-container > .shopify-section:nth-child(2) {
   position: -webkit-sticky;
   position: sticky;
-  top: calc(var(--header-height) + 3em + var(--title-sm) * 1.25 + 1em);
-  box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.12);
+  top: calc(var(--header-height) + 2em + var(--title-sm) * 1.25 + 1em);
+  /* box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.12); */
 }
-.main-content > .shopify-section:nth-child(3) > div {
-  border-radius: 20px 20px 0 0;
-  overflow: hidden;
-}
-.main-content > .shopify-section:nth-child(4) {
-  position: -webkit-sticky;
-  position: sticky;
-  top: calc(var(--header-height) + 4.5em + var(--title-sm) * 1.25 + 1em);
-  box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.12);
-}
-.main-content > .shopify-section:nth-child(4) > div  {
+.stacking-container > .shopify-section:nth-child(2) > div {
   /* border-radius: 20px 20px 0 0; */
   overflow: hidden;
 }
+
+/* Card 3 (was nth-child(4)) — sits below TWO headings (Categories + Gifts),
+   so it needs the heading-height term (title-sm * 1.25) twice, not once. */
+.stacking-container > .shopify-section:nth-child(3) {
+  position: -webkit-sticky;
+  position: sticky;
+  top: calc(var(--header-height) + 4em + var(--title-sm) * 1.25 * 2 + 1em);
+  /* box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.12); */
+}
+.stacking-container > .shopify-section:nth-child(3) > div {
+  /* border-radius: 20px 20px 0 0; */
+  overflow: hidden;
+}
+
 @media screen and (max-width: 767px) {
-  .main-content > .shopify-section:nth-child(3) {
+  .stacking-container > .shopify-section:nth-child(2) {
     top: calc(var(--header-height) + 1.3em + var(--title-sm) * 1.25);
+  }
+  .stacking-container > .shopify-section:nth-child(3) {
+    /* Two headings above it on mobile too, so double the heading-height term. */
+    top: calc(var(--header-height) + 2.6em + var(--title-sm) * 1.25 * 2);
   }
 }
