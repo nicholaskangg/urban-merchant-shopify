@@ -1452,5 +1452,400 @@
         "unit": "s"
       }
     ]
+  },
+  {
+    "name": "Custom fonts",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Self-host fonts that aren't on Google Fonts. 1) Upload the file: Online Store → Themes → ⋯ → Edit code → Assets → Add a new asset (drag a .woff2). 2) Fill a Family name + the file name (e.g. myfont.woff2) or a full URL below. 3) Type that Family name into any \"Custom font\" field anywhere in the theme."
+      },
+      {
+        "type": "header",
+        "content": "Custom font 1"
+      },
+      {
+        "type": "text",
+        "id": "customfont1_name",
+        "label": "Family name",
+        "info": "Type this exact name into Custom font fields (e.g. PlainScribe)."
+      },
+      {
+        "type": "text",
+        "id": "customfont1_src",
+        "label": "File name or URL",
+        "info": "Asset file name (myfont.woff2) or a full https:// URL to the font file."
+      },
+      {
+        "type": "select",
+        "id": "customfont1_weight",
+        "label": "Weight",
+        "default": "400",
+        "options": [
+          {
+            "value": "100",
+            "label": "100"
+          },
+          {
+            "value": "200",
+            "label": "200"
+          },
+          {
+            "value": "300",
+            "label": "300"
+          },
+          {
+            "value": "400",
+            "label": "400"
+          },
+          {
+            "value": "500",
+            "label": "500"
+          },
+          {
+            "value": "600",
+            "label": "600"
+          },
+          {
+            "value": "700",
+            "label": "700"
+          },
+          {
+            "value": "800",
+            "label": "800"
+          },
+          {
+            "value": "900",
+            "label": "900"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "customfont1_italic",
+        "label": "Italic",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Custom font 2"
+      },
+      {
+        "type": "text",
+        "id": "customfont2_name",
+        "label": "Family name"
+      },
+      {
+        "type": "text",
+        "id": "customfont2_src",
+        "label": "File name or URL"
+      },
+      {
+        "type": "select",
+        "id": "customfont2_weight",
+        "label": "Weight",
+        "default": "400",
+        "options": [
+          {
+            "value": "100",
+            "label": "100"
+          },
+          {
+            "value": "200",
+            "label": "200"
+          },
+          {
+            "value": "300",
+            "label": "300"
+          },
+          {
+            "value": "400",
+            "label": "400"
+          },
+          {
+            "value": "500",
+            "label": "500"
+          },
+          {
+            "value": "600",
+            "label": "600"
+          },
+          {
+            "value": "700",
+            "label": "700"
+          },
+          {
+            "value": "800",
+            "label": "800"
+          },
+          {
+            "value": "900",
+            "label": "900"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "customfont2_italic",
+        "label": "Italic",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Custom font 3"
+      },
+      {
+        "type": "text",
+        "id": "customfont3_name",
+        "label": "Family name"
+      },
+      {
+        "type": "text",
+        "id": "customfont3_src",
+        "label": "File name or URL"
+      },
+      {
+        "type": "select",
+        "id": "customfont3_weight",
+        "label": "Weight",
+        "default": "400",
+        "options": [
+          {
+            "value": "100",
+            "label": "100"
+          },
+          {
+            "value": "200",
+            "label": "200"
+          },
+          {
+            "value": "300",
+            "label": "300"
+          },
+          {
+            "value": "400",
+            "label": "400"
+          },
+          {
+            "value": "500",
+            "label": "500"
+          },
+          {
+            "value": "600",
+            "label": "600"
+          },
+          {
+            "value": "700",
+            "label": "700"
+          },
+          {
+            "value": "800",
+            "label": "800"
+          },
+          {
+            "value": "900",
+            "label": "900"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "customfont3_italic",
+        "label": "Italic",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Custom font 4"
+      },
+      {
+        "type": "text",
+        "id": "customfont4_name",
+        "label": "Family name"
+      },
+      {
+        "type": "text",
+        "id": "customfont4_src",
+        "label": "File name or URL"
+      },
+      {
+        "type": "select",
+        "id": "customfont4_weight",
+        "label": "Weight",
+        "default": "400",
+        "options": [
+          {
+            "value": "100",
+            "label": "100"
+          },
+          {
+            "value": "200",
+            "label": "200"
+          },
+          {
+            "value": "300",
+            "label": "300"
+          },
+          {
+            "value": "400",
+            "label": "400"
+          },
+          {
+            "value": "500",
+            "label": "500"
+          },
+          {
+            "value": "600",
+            "label": "600"
+          },
+          {
+            "value": "700",
+            "label": "700"
+          },
+          {
+            "value": "800",
+            "label": "800"
+          },
+          {
+            "value": "900",
+            "label": "900"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "customfont4_italic",
+        "label": "Italic",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Custom font 5"
+      },
+      {
+        "type": "text",
+        "id": "customfont5_name",
+        "label": "Family name"
+      },
+      {
+        "type": "text",
+        "id": "customfont5_src",
+        "label": "File name or URL"
+      },
+      {
+        "type": "select",
+        "id": "customfont5_weight",
+        "label": "Weight",
+        "default": "400",
+        "options": [
+          {
+            "value": "100",
+            "label": "100"
+          },
+          {
+            "value": "200",
+            "label": "200"
+          },
+          {
+            "value": "300",
+            "label": "300"
+          },
+          {
+            "value": "400",
+            "label": "400"
+          },
+          {
+            "value": "500",
+            "label": "500"
+          },
+          {
+            "value": "600",
+            "label": "600"
+          },
+          {
+            "value": "700",
+            "label": "700"
+          },
+          {
+            "value": "800",
+            "label": "800"
+          },
+          {
+            "value": "900",
+            "label": "900"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "customfont5_italic",
+        "label": "Italic",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Custom font 6"
+      },
+      {
+        "type": "text",
+        "id": "customfont6_name",
+        "label": "Family name"
+      },
+      {
+        "type": "text",
+        "id": "customfont6_src",
+        "label": "File name or URL"
+      },
+      {
+        "type": "select",
+        "id": "customfont6_weight",
+        "label": "Weight",
+        "default": "400",
+        "options": [
+          {
+            "value": "100",
+            "label": "100"
+          },
+          {
+            "value": "200",
+            "label": "200"
+          },
+          {
+            "value": "300",
+            "label": "300"
+          },
+          {
+            "value": "400",
+            "label": "400"
+          },
+          {
+            "value": "500",
+            "label": "500"
+          },
+          {
+            "value": "600",
+            "label": "600"
+          },
+          {
+            "value": "700",
+            "label": "700"
+          },
+          {
+            "value": "800",
+            "label": "800"
+          },
+          {
+            "value": "900",
+            "label": "900"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "customfont6_italic",
+        "label": "Italic",
+        "default": false
+      }
+    ]
   }
 ]

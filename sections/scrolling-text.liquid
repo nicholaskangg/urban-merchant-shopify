@@ -5,9 +5,59 @@
     {%- render 'section-variables', section: section -%}
     --section-grid-gap: {{ section.settings.grid_horizontal }}px;
   }
+  #shopify-section-{{ section.id }} .scrolling-text__item.with-media {
+    gap: 0;
+  }
+  #shopify-section-{{ section.id }} .scrolling-text__caption {
+    margin-top: 0.85rem;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: normal;
+    max-width: var(--caption-width, none);
+  }
+  #shopify-section-{{ section.id }} .scrolling-text__caption-name {
+    font-weight: 600;
+    font-size: var(--name-size, 0.95rem);
+  }
+  #shopify-section-{{ section.id }} .scrolling-text__caption-address {
+    font-size: var(--address-size, 0.78rem);
+    opacity: 0.65;
+    margin-top: 0.15rem;
+  }
+  #shopify-section-{{ section.id }} .scrolling-text__caption-name,
+  #shopify-section-{{ section.id }} .scrolling-text__caption-name * {
+    font-family: var(--name-font, inherit) !important;
+  }
+  #shopify-section-{{ section.id }} .scrolling-text__caption-address,
+  #shopify-section-{{ section.id }} .scrolling-text__caption-address * {
+    font-family: var(--address-font, inherit) !important;
+  }
+  #shopify-section-{{ section.id }} .is-fade-edges .scrolling-text {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade-w, 8%), #000 calc(100% - var(--fade-w, 8%)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--fade-w, 8%), #000 calc(100% - var(--fade-w, 8%)), transparent);
+  }
+  @media screen and (max-width: 767px) {
+    #shopify-section-{{ section.id }}.scrolling-text-section:has(.is-swipe-mobile),
+    #shopify-section-{{ section.id }} .is-swipe-mobile {
+      overflow: visible;
+    }
+    #shopify-section-{{ section.id }} .is-swipe-mobile .scrolling-text {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-x;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      width: 100%;
+      max-width: 100%;
+    }
+    #shopify-section-{{ section.id }} .is-swipe-mobile .scrolling-text::-webkit-scrollbar { display: none; }
+    #shopify-section-{{ section.id }} .is-swipe-mobile .marquee {
+      animation: none !important;
+    }
+  }
 </style>
 
-<div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}{% if section.settings.enable_twin %} section--plain{% endif %}">
+<div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}{% if section.settings.enable_twin %} section--plain{% endif %}{% if section.settings.fade_edges %} is-fade-edges{% endif %}{% if section.settings.enable_swipe_mobile %} is-swipe-mobile{% endif %}"{% if section.settings.fade_edges %} style="--fade-w: {{ section.settings.fade_width | default: 8 }}%;"{% endif %}>
   <div class="relative z-1">
     {%- if section.blocks.size > 0 -%}
       {%- capture marquee -%}
@@ -54,13 +104,31 @@
                   {%- endif -%}
                 {%- endcapture -%}
 
-                <div class="scrolling-text__item with-media flex items-center shrink-0 media media--transparent relative" style="--image-height: {{ image_height }}px;" {{ block.shopify_attributes }}>
+                <div class="scrolling-text__item with-media flex flex-col items-center justify-center shrink-0 media media--transparent relative" style="--image-height: {{ image_height }}px;" {{ block.shopify_attributes }}>
                   {%- if block.settings.link != blank -%}
                     <a class="leading-none" href="{{ block.settings.link }}"{% if block.settings.external %} target="_blank" rel="noopener"{% endif %} aria-label="{{ block.settings.accessibility_info | escape }}">
                       {{- image -}}
                     </a>
                   {%- else -%}
                     {{- image -}}
+                  {%- endif -%}
+                  {%- liquid
+                    assign outlet = block.settings.outlet
+                    assign cafe_name = block.settings.cafe_name
+                    if cafe_name == blank and outlet != blank
+                      assign cafe_name = outlet.name.value
+                    endif
+                    assign cafe_address = block.settings.cafe_address
+                    if cafe_address == blank and outlet != blank
+                      assign cafe_address = outlet.address.value
+                    endif
+                  -%}
+                  {%- if cafe_name != blank or cafe_address != blank -%}
+                    {%- render 'font-loader', name: block.settings.caption_font -%}{%- render 'font-loader', name: block.settings.address_font -%}
+                    <div class="scrolling-text__caption text-center leading-tight" style="{% if block.settings.caption_font != blank %}--name-font:'{{ block.settings.caption_font | strip }}',sans-serif;{% endif %}{% if block.settings.address_font != blank %}--address-font:'{{ block.settings.address_font | strip }}',sans-serif;{% endif %}--name-size:{{ block.settings.caption_size | default: 15 }}px;--address-size:{{ block.settings.address_size | default: 12 }}px;{% if block.settings.caption_width > 0 %}--caption-width:{{ block.settings.caption_width }}px;{% endif %}">
+                      {%- if cafe_name != blank -%}<span class="scrolling-text__caption-name block">{{ cafe_name }}</span>{%- endif -%}
+                      {%- if cafe_address != blank -%}<span class="scrolling-text__caption-address block">{{ cafe_address }}</span>{%- endif -%}
+                    </div>
                   {%- endif -%}
                 </div>
             {%- endcase -%}
@@ -148,6 +216,31 @@
       "id": "enable_parallax",
       "label": "t:sections.global.settings.enable_parallax.label",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_swipe_mobile",
+      "label": "Allow swipe on mobile",
+      "info": "On mobile, visitors can swipe through the row (auto-scroll is paused).",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "fade_edges",
+      "label": "Fade into background at edges",
+      "info": "Items fade into the section background as they reach the left/right edges.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "fade_width",
+      "min": 2,
+      "max": 25,
+      "step": 1,
+      "unit": "%",
+      "label": "Fade width",
+      "default": 8,
+      "visible_if": "{{ section.settings.fade_edges }}"
     },
     {
       "type": "header",
@@ -342,6 +435,73 @@
           "type": "image_picker",
           "id": "image",
           "label": "t:sections.global.settings.image.label"
+        },
+        {
+          "type": "metaobject",
+          "id": "outlet",
+          "metaobject_type": "outlet",
+          "label": "Outlet (single source)",
+          "info": "Link an Outlet record to auto-fill the name & address below. The fields below override it if filled."
+        },
+        {
+          "type": "inline_richtext",
+          "id": "cafe_name",
+          "label": "Cafe name (header)",
+          "info": "Overrides the linked Outlet's name."
+        },
+        {
+          "type": "inline_richtext",
+          "id": "cafe_address",
+          "label": "Address (body)",
+          "info": "Overrides the linked Outlet's address."
+        },
+        {
+          "type": "text",
+          "id": "caption_font",
+          "label": "Cafe name font (Google Font)",
+          "info": "Google Fonts family for the name, e.g. EB Garamond. Blank = theme font.",
+          "visible_if": "{{ block.settings.cafe_name != blank }}"
+        },
+        {
+          "type": "text",
+          "id": "address_font",
+          "label": "Address font (Google Font)",
+          "info": "Google Fonts family for the address. Blank = theme font.",
+          "visible_if": "{{ block.settings.cafe_address != blank }}"
+        },
+        {
+          "type": "range",
+          "id": "caption_size",
+          "min": 10,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "label": "Cafe name size",
+          "default": 15,
+          "visible_if": "{{ block.settings.cafe_name != blank }}"
+        },
+        {
+          "type": "range",
+          "id": "address_size",
+          "min": 8,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Address size",
+          "default": 12,
+          "visible_if": "{{ block.settings.cafe_address != blank }}"
+        },
+        {
+          "type": "range",
+          "id": "caption_width",
+          "min": 0,
+          "max": 400,
+          "step": 10,
+          "unit": "px",
+          "label": "Caption max width",
+          "info": "0 = single line. Set a width to wrap long addresses.",
+          "default": 0,
+          "visible_if": "{{ block.settings.cafe_name != blank or block.settings.cafe_address != blank }}"
         },
         {
           "type": "range",

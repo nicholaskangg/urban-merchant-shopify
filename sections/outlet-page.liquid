@@ -1,0 +1,526 @@
+{%- liquid
+  assign name = metaobject.name.value
+  assign address = metaobject.address.value
+  assign tagline = metaobject.tagline.value
+  assign collection = metaobject.collection.value
+
+  assign banner = metaobject.banner_image.value
+  if banner == blank
+    assign banner = metaobject.primary_image.value
+  endif
+
+  assign logo = metaobject.logo.value
+
+  assign accent = metaobject.accent_color.value
+
+  assign maps_url = metaobject.maps_url.value
+  if maps_url == blank and address != blank
+    assign enc = address | strip_newlines | url_encode
+    assign maps_url = 'https://www.google.com/maps/search/?api=1&query=' | append: enc
+  endif
+
+  assign ppp = section.settings.products_per_page | default: 24
+
+  assign show_desc_block = false
+  if section.settings.show_description and metaobject.description != blank
+    assign show_desc_block = true
+  endif
+  assign show_pitch = false
+  if section.settings.pitch_text != blank
+    assign show_pitch = true
+  endif
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --outlet-accent: {% if accent != blank %}{{ accent }}{% else %}rgb(var(--color-foreground)){% endif %};
+    --grid-cols: {{ section.settings.columns }};
+    {%- render 'section-variables', section: section -%}
+  }
+
+  /* ---------- Banner ---------- */
+  #shopify-section-{{ section.id }} .ob {
+    position: relative;
+    overflow: hidden;
+    min-height: var(--ob-height, 340px);
+    display: flex;
+    align-items: flex-end;
+    isolation: isolate;
+  }
+  #shopify-section-{{ section.id }} .ob__bg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; z-index: -2;
+    transform: scale(1.04);
+  }
+  #shopify-section-{{ section.id }} .ob::after {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgba(0,0,0,calc(var(--ob-overlay) * 0.4)) 0%, rgba(0,0,0,calc(var(--ob-overlay) * 0.15)) 35%, rgba(0,0,0,var(--ob-overlay)) 100%);
+  }
+  #shopify-section-{{ section.id }} .ob__inner {
+    width: 100%;
+    padding-block: clamp(2rem, 5vw, 4rem);
+    color: #fff;
+    display: flex; flex-direction: column; gap: 0.9rem;
+  }
+  #shopify-section-{{ section.id }} .ob__eyebrow {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.85;
+  }
+  #shopify-section-{{ section.id }} .ob__eyebrow::before {
+    content: ''; width: 1.75rem; height: 1px; background: currentColor; opacity: 0.6;
+  }
+  #shopify-section-{{ section.id }} .ob__logo { max-width: 120px; max-height: 64px; width: auto; height: auto; margin-bottom: 0.4rem; filter: drop-shadow(0 2px 12px rgba(0,0,0,0.35)); }
+  #shopify-section-{{ section.id }} .ob__title {
+    font-family: var(--font-heading-family); font-style: var(--font-heading-style);
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
+    font-size: clamp(2.2rem, 6vw, 4.5rem); line-height: 0.98; margin: 0;
+    text-shadow: 0 2px 24px rgba(0,0,0,0.35);
+  }
+  #shopify-section-{{ section.id }} .ob__tagline { font-size: clamp(1rem, 1.6vw, 1.25rem); max-width: 46ch; opacity: 0.95; }
+  #shopify-section-{{ section.id }} .ob__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.5rem; margin-top: 0.4rem; font-size: 0.8rem; }
+  #shopify-section-{{ section.id }} .ob__meta a, #shopify-section-{{ section.id }} .ob__meta button {
+    color: #fff; background: none; border: 0; padding: 0; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; letter-spacing: 0.04em;
+    opacity: 0.9; transition: opacity 0.2s ease;
+  }
+  #shopify-section-{{ section.id }} .ob__meta a:hover, #shopify-section-{{ section.id }} .ob__meta button:hover { opacity: 1; }
+  #shopify-section-{{ section.id }} .ob__meta svg { width: 1rem; height: 1rem; }
+
+  /* ---------- Collab strip ---------- */
+  #shopify-section-{{ section.id }} .ob-pitch {
+    border-bottom: 1px solid rgb(var(--color-foreground) / 0.12);
+    padding-block: clamp(1.5rem, 3vw, 2.5rem);
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(1.5rem, 4vw, 4rem); align-items: end;
+  }
+  #shopify-section-{{ section.id }} .ob-pitch__desc { font-size: 1.05rem; line-height: 1.55; max-width: 60ch; }
+  #shopify-section-{{ section.id }} .ob-pitch__desc .metafield-rich_text_field { margin: 0; }
+  #shopify-section-{{ section.id }} .ob-pitch__desc > :first-child, #shopify-section-{{ section.id }} .ob-pitch__desc .metafield-rich_text_field > :first-child { margin-top: 0; }
+  #shopify-section-{{ section.id }} .ob-pitch__desc > :last-child, #shopify-section-{{ section.id }} .ob-pitch__desc .metafield-rich_text_field > :last-child { margin-bottom: 0; }
+  #shopify-section-{{ section.id }} .ob-pitch__note { font-size: 0.85rem; line-height: 1.5; opacity: 0.7; }
+  #shopify-section-{{ section.id }} .ob-pitch__note strong { font-weight: 600; opacity: 1; }
+  @media (max-width: 749px) { #shopify-section-{{ section.id }} .ob-pitch { grid-template-columns: 1fr; align-items: start; } }
+
+  /* ---------- Shop toolbar ---------- */
+  #shopify-section-{{ section.id }} .ob-shop { padding-top: clamp(1.5rem, 3vw, 2.5rem); }
+  #shopify-section-{{ section.id }} .ob-toolbar {
+    position: sticky; top: var(--header-height, 0px); z-index: 4;
+    background: rgb(var(--color-background));
+    display: flex; flex-wrap: wrap; align-items: center; gap: 1rem;
+    padding-block: 1rem; margin-bottom: 1.25rem;
+    border-bottom: 1px solid rgb(var(--color-foreground) / 0.12);
+  }
+  #shopify-section-{{ section.id }} .ob-search { position: relative; flex: 1 1 240px; max-width: 420px; }
+  #shopify-section-{{ section.id }} .ob-search input {
+    width: 100%; padding: 0.7rem 1rem 0.7rem 2.5rem; font-size: 0.9rem;
+    border: 1px solid rgb(var(--color-foreground) / 0.25); border-radius: 999px;
+    background: transparent; color: rgb(var(--color-foreground)); transition: border-color 0.2s ease;
+  }
+  #shopify-section-{{ section.id }} .ob-search input:focus { outline: none; border-color: var(--outlet-accent); }
+  #shopify-section-{{ section.id }} .ob-search svg { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); width: 1.05rem; height: 1.05rem; opacity: 0.5; pointer-events: none; }
+  #shopify-section-{{ section.id }} .ob-toolbar__count { font-size: 0.78rem; letter-spacing: 0.06em; opacity: 0.6; white-space: nowrap; }
+  #shopify-section-{{ section.id }} .ob-toolbar__spacer { flex: 1 1 auto; }
+  #shopify-section-{{ section.id }} .ob-sort { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; }
+  #shopify-section-{{ section.id }} .ob-sort select {
+    font: inherit; font-size: 0.82rem; letter-spacing: normal; text-transform: none;
+    border: 0; background: transparent; color: rgb(var(--color-foreground)); cursor: pointer; padding-right: 0.25rem;
+  }
+  #shopify-section-{{ section.id }} .ob-filtersbtn {
+    display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;
+    border: 1px solid rgb(var(--color-foreground) / 0.25); border-radius: 999px;
+    padding: 0.55rem 1.1rem; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+    background: transparent; color: rgb(var(--color-foreground));
+  }
+  #shopify-section-{{ section.id }} .ob-filtersbtn[aria-expanded="true"] { background: rgb(var(--color-foreground) / 0.06); }
+  #shopify-section-{{ section.id }} .ob-filtersbtn svg { width: 1rem; height: 1rem; }
+
+  /* ---------- Filters panel ---------- */
+  #shopify-section-{{ section.id }} .ob-filters {
+    display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease;
+  }
+  #shopify-section-{{ section.id }} .ob-filters.is-open { grid-template-rows: 1fr; }
+  #shopify-section-{{ section.id }} .ob-filters__inner { overflow: hidden; min-height: 0; }
+  #shopify-section-{{ section.id }} .ob-filters__pad {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem 2.5rem; padding-bottom: 1.5rem;
+  }
+  #shopify-section-{{ section.id }} .ob-fgroup { display: flex; flex-direction: column; gap: 0.6rem; }
+  #shopify-section-{{ section.id }} .ob-fgroup__label { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.55; }
+  #shopify-section-{{ section.id }} .ob-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  #shopify-section-{{ section.id }} .ob-chip {
+    cursor: pointer; border: 1px solid rgb(var(--color-foreground) / 0.22); border-radius: 999px;
+    padding: 0.4rem 0.9rem; font-size: 0.8rem; background: transparent; color: rgb(var(--color-foreground));
+    transition: all 0.18s ease;
+  }
+  #shopify-section-{{ section.id }} .ob-chip:hover { border-color: var(--outlet-accent); }
+  #shopify-section-{{ section.id }} .ob-chip.is-active { background: var(--outlet-accent); border-color: var(--outlet-accent); color: rgb(var(--color-background)); }
+  #shopify-section-{{ section.id }} .ob-price { display: inline-flex; align-items: center; gap: 0.5rem; }
+  #shopify-section-{{ section.id }} .ob-price input {
+    width: 5.5rem; padding: 0.45rem 0.7rem; font-size: 0.85rem; border-radius: 8px;
+    border: 1px solid rgb(var(--color-foreground) / 0.22); background: transparent; color: rgb(var(--color-foreground));
+  }
+  #shopify-section-{{ section.id }} .ob-price input:focus { outline: none; border-color: var(--outlet-accent); }
+  #shopify-section-{{ section.id }} .ob-toggle { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; cursor: pointer; }
+  #shopify-section-{{ section.id }} .ob-clear {
+    background: none; border: 0; cursor: pointer; color: rgb(var(--color-foreground)); opacity: 0.6;
+    font-size: 0.78rem; letter-spacing: 0.06em; text-decoration: underline; text-underline-offset: 3px; align-self: end;
+  }
+  #shopify-section-{{ section.id }} .ob-clear:hover { opacity: 1; }
+
+  /* ---------- Product grid ---------- */
+  #shopify-section-{{ section.id }} .ob-grid {
+    display: grid; grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+    gap: clamp(1rem, 2vw, 2rem) clamp(0.75rem, 1.5vw, 1.5rem); list-style: none; padding: 0; margin: 0;
+  }
+  @media (max-width: 989px) { #shopify-section-{{ section.id }} .ob-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 749px) { #shopify-section-{{ section.id }} .ob-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  #shopify-section-{{ section.id }} .ob-grid__item[hidden] { display: none; }
+  #shopify-section-{{ section.id }} .ob-empty { display: none; padding: 4rem 1rem; text-align: center; opacity: 0.7; }
+  #shopify-section-{{ section.id }} .ob-empty.is-shown { display: block; }
+  #shopify-section-{{ section.id }} .ob-empty__title { font-family: var(--font-heading-family); font-size: 1.4rem; margin-bottom: 0.5rem; }
+
+  #shopify-section-{{ section.id }} .ob-noshop { padding: 3rem 1rem; text-align: center; opacity: 0.7; }
+  #shopify-section-{{ section.id }} copy-text.is-copied { opacity: 0.6; }
+
+  @media (max-width: 749px) {
+    #shopify-section-{{ section.id }} .ob-toolbar__count { order: 3; width: 100%; }
+  }
+</style>
+
+{%- comment -%} ---------------- BANNER ---------------- {%- endcomment -%}
+{%- if section.settings.show_banner -%}
+  <div class="ob" style="--ob-height: {{ section.settings.banner_height }}px; --ob-overlay: {{ section.settings.banner_overlay | divided_by: 100.0 }};">
+    {%- if banner != blank -%}
+      {{ banner | image_url: width: 2400 | image_tag: loading: 'eager', widths: '600,900,1200,1600,2000,2400', sizes: '100vw', class: 'ob__bg' }}
+    {%- endif -%}
+    <div class="page-width{% if section.settings.full_width %} page-width--full{% endif %}">
+      <div class="ob__inner">
+        {%- if section.settings.eyebrow != blank -%}<span class="ob__eyebrow">{{ section.settings.eyebrow }}</span>{%- endif -%}
+        {%- if section.settings.show_logo and logo != blank -%}
+          {{ logo | image_url: width: 360 | image_tag: loading: 'eager', widths: '120,240,360', class: 'ob__logo' }}
+        {%- endif -%}
+        {%- if name != blank -%}<h1 class="ob__title">{{ name }}</h1>{%- endif -%}
+        {%- if tagline != blank -%}<p class="ob__tagline">{{ tagline }}</p>{%- endif -%}
+        {%- if address != blank -%}
+          <div class="ob__meta">
+            <span style="opacity:0.85">{{ address }}</span>
+            <copy-text data-text="{{ address | strip_newlines | escape }}" role="button" tabindex="0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span class="ob__copy-label" data-copy="Copy" data-copied="Copied!">Copy</span>
+            </copy-text>
+            {%- if maps_url != blank -%}
+              <a href="{{ maps_url }}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Directions</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+<div class="section section--padding{% if section.settings.rounded %} section--rounded relative{% endif %}">
+  <div class="page-width{% if section.settings.full_width %} page-width--full{% endif %} relative">
+
+    {%- comment -%} ---------------- COLLAB / DESCRIPTION ---------------- {%- endcomment -%}
+    {%- if show_desc_block or show_pitch -%}
+      <div class="ob-pitch">
+        {%- if show_desc_block -%}
+          <div class="ob-pitch__desc rte">{{ metaobject.description | metafield_tag }}</div>
+        {%- else -%}
+          <div></div>
+        {%- endif -%}
+        {%- if show_pitch -%}
+          <p class="ob-pitch__note">{{ section.settings.pitch_text }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ---------------- SHOP ---------------- {%- endcomment -%}
+    {%- if collection != blank and collection.products_count > 0 -%}
+      <div class="ob-shop">
+        {%- if section.settings.shop_heading != blank -%}
+          <h2 class="heading title-md mb-6">{{ section.settings.shop_heading }}</h2>
+        {%- endif -%}
+
+        <outlet-shop>
+          {%- comment -%} Toolbar {%- endcomment -%}
+          <div class="ob-toolbar">
+            {%- if section.settings.show_search -%}
+              <div class="ob-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="search" data-search placeholder="{{ section.settings.search_placeholder | default: 'Search products' | escape }}" aria-label="Search products" autocomplete="off">
+              </div>
+            {%- endif -%}
+            <span class="ob-toolbar__count"><span data-count>{{ collection.products_count }}</span> {{ section.settings.results_label | default: 'items' }}</span>
+            <div class="ob-toolbar__spacer"></div>
+            {%- if section.settings.show_filters -%}
+              <button type="button" class="ob-filtersbtn" data-filters-toggle aria-expanded="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+                {{ section.settings.filters_label | default: 'Filter' }}
+              </button>
+            {%- endif -%}
+            {%- if section.settings.show_sort -%}
+              <label class="ob-sort">Sort
+                <select data-sort>
+                  <option value="featured">Featured</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="title-asc">Alphabetical: A–Z</option>
+                  <option value="title-desc">Alphabetical: Z–A</option>
+                </select>
+              </label>
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} Filters {%- endcomment -%}
+          {%- if section.settings.show_filters -%}
+            {%- assign types = collection.all_types | sort -%}
+            <div class="ob-filters" data-filters>
+              <div class="ob-filters__inner">
+                <div class="ob-filters__pad">
+                  {%- assign has_types = false -%}
+                  {%- for t in types -%}{%- if t != blank -%}{%- assign has_types = true -%}{%- endif -%}{%- endfor -%}
+                  {%- if has_types -%}
+                    <div class="ob-fgroup">
+                      <span class="ob-fgroup__label">Category</span>
+                      <div class="ob-chips">
+                        {%- for t in types -%}
+                          {%- if t != blank -%}
+                            <button type="button" class="ob-chip" data-filter-type data-value="{{ t | downcase | escape }}">{{ t }}</button>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  {%- endif -%}
+
+                  <div class="ob-fgroup">
+                    <span class="ob-fgroup__label">Price ({{ cart.currency.symbol | default: '$' }})</span>
+                    <div class="ob-price">
+                      <input type="number" inputmode="numeric" min="0" data-price-min placeholder="Min" aria-label="Minimum price">
+                      <span>–</span>
+                      <input type="number" inputmode="numeric" min="0" data-price-max placeholder="Max" aria-label="Maximum price">
+                    </div>
+                  </div>
+
+                  <div class="ob-fgroup">
+                    <span class="ob-fgroup__label">Availability</span>
+                    <label class="ob-toggle"><input type="checkbox" data-instock> In stock only</label>
+                  </div>
+
+                  <button type="button" class="ob-clear" data-clear>Clear all</button>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Grid {%- endcomment -%}
+          {%- paginate collection.products by ppp -%}
+            <ul class="ob-grid" data-grid role="list">
+              {%- for product in collection.products -%}
+                <li class="ob-grid__item"
+                    data-title="{{ product.title | downcase | escape }}"
+                    data-type="{{ product.type | downcase | escape }}"
+                    data-vendor="{{ product.vendor | downcase | escape }}"
+                    data-tags="{{ product.tags | join: ',' | downcase | escape }}"
+                    data-price="{{ product.price }}"
+                    data-available="{{ product.available }}"
+                    data-index="{{ forloop.index0 }}">
+                  {%- render 'product-card',
+                      product: product,
+                      product_id: product.id,
+                      section_id: section.id,
+                      collection: collection,
+                      image_ratio: section.settings.image_ratio,
+                      show_secondary_image: section.settings.show_secondary_image,
+                      show_vendor: section.settings.show_vendor,
+                      show_quick_add: section.settings.show_quick_add,
+                      show_rating: section.settings.show_rating -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+
+            <div class="ob-empty" data-empty>
+              <div class="ob-empty__title">No matches</div>
+              <p>Try clearing a filter or searching something else.</p>
+            </div>
+
+            {%- if paginate.pages > 1 -%}
+              <div class="pagination-wrapper mt-10">{%- render 'pagination', paginate: paginate -%}</div>
+            {%- endif -%}
+          {%- endpaginate -%}
+        </outlet-shop>
+      </div>
+    {%- elsif collection != blank -%}
+      <div class="ob-noshop"><p>No products yet — tag products with <strong>{{ metaobject.system.handle }}</strong> to populate this collection.</p></div>
+    {%- else -%}
+      <div class="ob-noshop"><p>Link a <strong>Shop collection</strong> on this outlet to display products here.</p></div>
+    {%- endif -%}
+  </div>
+</div>
+
+<script>
+  if (!customElements.get('copy-text')) {
+    customElements.define('copy-text', class extends HTMLElement {
+      connectedCallback() {
+        this.addEventListener('click', () => this.copy());
+        this.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.copy(); } });
+      }
+      copy() {
+        const text = this.getAttribute('data-text'); if (!text) return;
+        const done = () => {
+          this.classList.add('is-copied');
+          const l = this.querySelector('[data-copied]');
+          if (l) { const o = l.dataset.copy || l.textContent; l.textContent = l.dataset.copied; setTimeout(() => { l.textContent = o; this.classList.remove('is-copied'); }, 1500); }
+          else setTimeout(() => this.classList.remove('is-copied'), 1500);
+        };
+        if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(done).catch(() => this.fb(text, done));
+        else this.fb(text, done);
+      }
+      fb(text, done) { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) {} document.body.removeChild(ta); }
+    });
+  }
+
+  if (!customElements.get('outlet-shop')) {
+    customElements.define('outlet-shop', class extends HTMLElement {
+      connectedCallback() {
+        this.grid = this.querySelector('[data-grid]');
+        this.items = Array.from(this.querySelectorAll('.ob-grid__item'));
+        this.search = this.querySelector('[data-search]');
+        this.sort = this.querySelector('[data-sort]');
+        this.min = this.querySelector('[data-price-min]');
+        this.max = this.querySelector('[data-price-max]');
+        this.instock = this.querySelector('[data-instock]');
+        this.countEl = this.querySelector('[data-count]');
+        this.empty = this.querySelector('[data-empty]');
+        this.chips = Array.from(this.querySelectorAll('[data-filter-type]'));
+        this.activeTypes = new Set();
+        this.total = this.items.length;
+
+        const onInput = () => this.apply();
+        this.search && this.search.addEventListener('input', this.debounce(onInput, 120));
+        this.sort && this.sort.addEventListener('change', onInput);
+        this.min && this.min.addEventListener('input', this.debounce(onInput, 200));
+        this.max && this.max.addEventListener('input', this.debounce(onInput, 200));
+        this.instock && this.instock.addEventListener('change', onInput);
+        this.chips.forEach((c) => c.addEventListener('click', () => {
+          c.classList.toggle('is-active');
+          const v = c.dataset.value;
+          c.classList.contains('is-active') ? this.activeTypes.add(v) : this.activeTypes.delete(v);
+          this.apply();
+        }));
+
+        const clear = this.querySelector('[data-clear]');
+        clear && clear.addEventListener('click', () => this.clearAll());
+
+        const toggle = this.querySelector('[data-filters-toggle]');
+        const panel = this.querySelector('[data-filters]');
+        if (toggle && panel) toggle.addEventListener('click', () => {
+          const open = panel.classList.toggle('is-open');
+          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      }
+
+      debounce(fn, wait) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), wait); }; }
+
+      clearAll() {
+        if (this.search) this.search.value = '';
+        if (this.min) this.min.value = '';
+        if (this.max) this.max.value = '';
+        if (this.instock) this.instock.checked = false;
+        if (this.sort) this.sort.value = 'featured';
+        this.chips.forEach((c) => c.classList.remove('is-active'));
+        this.activeTypes.clear();
+        this.apply();
+      }
+
+      apply() {
+        const q = (this.search?.value || '').trim().toLowerCase();
+        const min = parseFloat(this.min?.value);
+        const max = parseFloat(this.max?.value);
+        const instock = this.instock?.checked;
+
+        let visible = this.items.filter((it) => {
+          if (q) {
+            const hay = it.dataset.title + ' ' + it.dataset.type + ' ' + it.dataset.vendor + ' ' + it.dataset.tags;
+            if (!hay.includes(q)) return false;
+          }
+          if (this.activeTypes.size && !this.activeTypes.has(it.dataset.type)) return false;
+          const price = parseInt(it.dataset.price, 10) / 100;
+          if (!isNaN(min) && price < min) return false;
+          if (!isNaN(max) && price > max) return false;
+          if (instock && it.dataset.available !== 'true') return false;
+          return true;
+        });
+
+        const sort = this.sort?.value || 'featured';
+        const num = (el) => parseInt(el.dataset.price, 10) || 0;
+        visible.sort((a, b) => {
+          switch (sort) {
+            case 'price-asc': return num(a) - num(b);
+            case 'price-desc': return num(b) - num(a);
+            case 'title-asc': return a.dataset.title.localeCompare(b.dataset.title);
+            case 'title-desc': return b.dataset.title.localeCompare(a.dataset.title);
+            default: return (+a.dataset.index) - (+b.dataset.index);
+          }
+        });
+
+        this.items.forEach((it) => { it.hidden = true; });
+        const frag = document.createDocumentFragment();
+        visible.forEach((it) => { it.hidden = false; frag.appendChild(it); });
+        this.grid.appendChild(frag);
+
+        if (this.countEl) this.countEl.textContent = visible.length;
+        if (this.empty) this.empty.classList.toggle('is-shown', visible.length === 0);
+      }
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Outlet page",
+  "settings": [
+    { "type": "header", "content": "Banner" },
+    { "type": "checkbox", "id": "show_banner", "label": "Show banner", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Outlet partner" },
+    { "type": "checkbox", "id": "show_logo", "label": "Show outlet logo on banner", "default": true },
+    { "type": "range", "id": "banner_height", "min": 220, "max": 620, "step": 10, "unit": "px", "label": "Banner height", "default": 360 },
+    { "type": "range", "id": "banner_overlay", "min": 0, "max": 90, "step": 5, "unit": "%", "label": "Banner overlay darkness", "default": 45 },
+    { "type": "header", "content": "Story" },
+    { "type": "checkbox", "id": "show_description", "label": "Show outlet description", "default": true },
+    { "type": "textarea", "id": "pitch_text", "label": "Partnership note", "info": "Small note on the right of the description — your collaboration pitch.", "default": "In partnership with this outlet — merchandise designed, customised and marketed by our studio." },
+    { "type": "header", "content": "Shop" },
+    { "type": "text", "id": "shop_heading", "label": "Shop heading", "default": "Shop the collection" },
+    { "type": "checkbox", "id": "show_search", "label": "Show search bar", "default": true },
+    { "type": "checkbox", "id": "show_filters", "label": "Show filters (category, price, availability)", "default": true },
+    { "type": "checkbox", "id": "show_sort", "label": "Show sort", "default": true },
+    { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Search products" },
+    { "type": "text", "id": "filters_label", "label": "Filter button label", "default": "Filter" },
+    { "type": "text", "id": "results_label", "label": "Results word", "default": "items" },
+    { "type": "range", "id": "products_per_page", "min": 8, "max": 50, "step": 1, "label": "Products per page", "default": 24 },
+    { "type": "header", "content": "Product grid" },
+    { "type": "range", "id": "columns", "min": 2, "max": 5, "step": 1, "label": "Columns (desktop)", "default": 4 },
+    {
+      "type": "select", "id": "image_ratio", "label": "Card image ratio", "default": "portrait",
+      "options": [
+        { "value": "square", "label": "Square" },
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "landscape", "label": "Landscape" }
+      ]
+    },
+    { "type": "checkbox", "id": "show_secondary_image", "label": "Show second image on hover", "default": true },
+    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false },
+    { "type": "checkbox", "id": "show_quick_add", "label": "Show quick add", "default": true },
+    { "type": "checkbox", "id": "show_rating", "label": "Show rating", "default": false },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_text", "label": "Text" },
+    { "type": "color", "id": "color_background", "label": "Background" },
+    { "type": "color_background", "id": "gradient_background", "label": "Background gradient" },
+    { "type": "header", "content": "Section" },
+    { "type": "checkbox", "id": "full_width", "label": "Full width", "default": false },
+    { "type": "checkbox", "id": "rounded", "label": "Rounded", "default": false },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Padding top", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Padding bottom", "default": 64 }
+  ]
+}
+{% endschema %}

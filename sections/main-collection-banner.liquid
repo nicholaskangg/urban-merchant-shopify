@@ -9,21 +9,105 @@
     assign lazyimage = 'lazy-image'
   endif
 
+  # If this collection belongs to an outlet (outlet handle == collection handle),
+  # fall back to the outlet's primary image (then logo) before the collection image.
+  # Prefer the explicit collection→outlet metafield reference (reliable); fall back to handle matching.
+  assign outlet_for_collection = collection.metafields.custom.outlet.value
+  if outlet_for_collection == blank
+    assign outlet_for_collection = metaobjects.outlet[collection.handle]
+  endif
+  assign outlet_banner_image = outlet_for_collection.primary_image.value
+  if outlet_banner_image == blank
+    assign outlet_banner_image = outlet_for_collection.logo.value
+  endif
+
   if section.settings.show_image
-    assign desktop_image = section.settings.image | default: collection.image
+    assign desktop_image = section.settings.image | default: outlet_banner_image | default: collection.image
     assign mobile_image = section.settings.image_mobile | default: desktop_image
   endif
 
   assign collection_alt = desktop_image.alt | default: collection.title
+
+  # Background style: 'default' (image), 'gradient' (auto from image colors), 'custom' (the manual Colors gradient).
+  # An outlet's own banner_gradient metafield (per-outlet) overrides the section style entirely.
+  assign bg_style = section.settings.background_style
+  assign outlet_gradient = outlet_for_collection.banner_gradient.value
+  assign outlet_header_logo = outlet_for_collection.header_logo.value
+  # Header text colour follows the logo choice unless set explicitly: white logo -> white text, dark logo -> dark text.
+  assign outlet_header_text = outlet_for_collection.header_text_color.value
+  if outlet_header_text == blank
+    if outlet_header_logo == 'white'
+      assign outlet_header_text = '#ffffff'
+    elsif outlet_header_logo == 'dark'
+      assign outlet_header_text = '#171717'
+    endif
+  endif
+  # Banner title/breadcrumb falls back to the header text colour.
+  assign outlet_text_color = outlet_for_collection.banner_text_color.value
+  if outlet_text_color == blank
+    assign outlet_text_color = outlet_header_text
+  endif
+  assign outlet_theme_color = outlet_for_collection.accent_color.value
+  assign has_banner_bg = false
+  if desktop_image != blank
+    assign has_banner_bg = true
+  endif
+  if bg_style == 'custom'
+    assign has_banner_bg = true
+  endif
+  if bg_style == 'outlet' and outlet_gradient != blank
+    assign has_banner_bg = true
+  endif
+
+  # Resolve the banner title font/size/alignment.
+  # Precedence: per-collection metafield  >  section title-block setting  >  theme default.
+  assign title_block = null
+  for b in section.blocks
+    if b.type == 'title'
+      assign title_block = b
+      break
+    endif
+  endfor
+
+  assign t_font = ''
+  assign t_size = 0
+  assign t_align = 'inherit'
+  if title_block != blank
+    assign t_font = title_block.settings.title_font
+    assign t_size = title_block.settings.title_size_px
+    assign t_align = title_block.settings.title_align
+  endif
+  # Outlet metaobject — the single onboarding place for an outlet's collection (matched by handle).
+  if outlet_for_collection.title_font != blank
+    assign t_font = outlet_for_collection.title_font.value
+  endif
+  if outlet_for_collection.title_font_size != blank
+    assign t_size = outlet_for_collection.title_font_size.value
+  endif
+  if outlet_for_collection.title_align != blank
+    assign t_align = outlet_for_collection.title_align.value
+  endif
+  # Collection metafield — optional explicit override, works for any collection (wins over the metaobject).
+  if collection.metafields.custom.title_font != blank
+    assign t_font = collection.metafields.custom.title_font.value
+  endif
+  if collection.metafields.custom.title_font_size != blank
+    assign t_size = collection.metafields.custom.title_font_size.value
+  endif
+  if collection.metafields.custom.title_align != blank
+    assign t_align = collection.metafields.custom.title_align.value
+  endif
 -%}
+
+{%- render 'font-loader', name: t_font, preload: true -%}
 
 <style>
   #shopify-section-{{ section.id }} {
     --section-padding-top: {{ section.settings.padding_top }}px;
     --section-padding-bottom: {{ section.settings.padding_bottom }}px;
-    {%- if desktop_image != blank %}
+    {%- if has_banner_bg %}
       {%- render 'section-variables', section: section -%}
-      {%- if section.settings.image_height == 'adapt' %}
+      {%- if desktop_image != blank and section.settings.image_height == 'adapt' %}
         --ratio-percent: {{ 1 | divided_by: desktop_image.aspect_ratio | times: 100 }}%;
       {% endif -%}
     {% endif -%}
@@ -36,32 +120,75 @@
       }
     }
   {% endif -%}
+
+  {%- if title_block != blank -%}
+    {%- if t_font != blank -%}
+      #shopify-section-{{ section.id }} .banner__title { font-family: '{{ t_font | strip }}', var(--font-heading-family) !important; }
+    {%- endif -%}
+    {%- if t_size > 0 -%}
+      #shopify-section-{{ section.id }} .banner__title { font-size: {{ t_size }}px !important; line-height: 1.02; }
+    {%- endif -%}
+    {%- if t_align != blank and t_align != 'inherit' -%}
+      #shopify-section-{{ section.id }} .banner__title { text-align: {{ t_align }} !important; width: 100%; }
+      #shopify-section-{{ section.id }} .banner__title .split-words { justify-content: {% if t_align == 'center' %}center{% elsif t_align == 'right' %}flex-end{% else %}flex-start{% endif %} !important; }
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if bg_style == 'outlet' and outlet_gradient != blank and outlet_text_color != blank -%}
+    #shopify-section-{{ section.id }} .banner__box,
+    #shopify-section-{{ section.id }} .banner__box * { color: {{ outlet_text_color }} !important; }
+  {%- endif -%}
+
+  {%- comment -%} Per-outlet header logo + text colour over a transparent header (so the nav stays readable on light/dark banners). {%- endcomment -%}
+  {%- comment -%} Scoped to body:not(.has-dropdown-menu): when the nav/submenu opens the header solidifies to white, so we let the theme's dark logo+text take over (otherwise white-on-white is invisible). {%- endcomment -%}
+  {%- if outlet_header_logo == 'dark' -%}
+    body:not(.has-dropdown-menu):not(.nav-hover) .header-transparent:not(.header-scrolled) .header { --header-logo-opacity: 1 !important; }
+  {%- elsif outlet_header_logo == 'white' -%}
+    body:not(.has-dropdown-menu):not(.nav-hover) .header-transparent:not(.header-scrolled) .header { --header-logo-opacity: 0 !important; }
+  {%- endif -%}
+  {%- if outlet_header_text != blank -%}
+    body:not(.has-dropdown-menu):not(.nav-hover) .header-transparent:not(.header-scrolled) .header,
+    body:not(.has-dropdown-menu):not(.nav-hover) .header-transparent:not(.header-scrolled) .header .menu__item,
+    body:not(.has-dropdown-menu):not(.nav-hover) .header-transparent:not(.header-scrolled) .header__navigation .menu__item,
+    body:not(.has-dropdown-menu):not(.nav-hover) .header-transparent:not(.header-scrolled) .header__secondary-link,
+    body:not(.has-dropdown-menu):not(.nav-hover) .header-transparent:not(.header-scrolled) .header .cart-count { color: {{ outlet_header_text }} !important; }
+  {%- endif -%}
+
+  {%- comment -%} Per-outlet theme colour — set the global page background variable so every themed surface (section backgrounds, rounded-corner fills, cards) follows it. {%- endcomment -%}
+  {%- if outlet_theme_color != blank -%}
+    :root { --color-base-background: {{ outlet_for_collection.accent_color.value.rgb }}; }
+  {%- endif -%}
 </style>
 
-<div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}"{% if section.settings.transparent_header and desktop_image != blank %} allow-transparent-header{% endif %}>
+<div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}"{% if section.settings.transparent_header and has_banner_bg %} allow-transparent-header{% endif %}>
   <div class="{% unless section.settings.full_width %}page-width {% endunless %}relative">
-    <div class="banner relative{% if desktop_image != blank %} media--{{ section.settings.image_height }} mobile:media--{{ section.settings.image_height_mobile }}{% endif %}">
-      {%- if desktop_image != blank -%}
-        <media-element class="banner__media block w-full h-full overflow-hidden"{% if section.settings.enable_parallax %} data-parallax="0.3" data-parallax-dir="{{ section.settings.parallax_direction }}"{% endif %}>
-          {%- capture sizes -%}{% if section.settings.full_width %}100vw{% else %}min({{ settings.page_width }}px, 100vw){% endif %}{%- endcapture -%}
-          <picture class="media media--height block w-full h-full relative overflow-hidden" is="animate-picture" data-animate="zoom-out">
-            {%- if mobile_image -%}
-              <source
-                media="(max-width: 767px)"
-                srcset="{{ mobile_image | image_url: width: '400x' }} 400w, {{ mobile_image | image_url: width: '600x' }} 600w, {{ mobile_image | image_url: width: '800x' }} 800w, {{ mobile_image | image_url: width: '1000x' }} 1000w"
-                width="{{ mobile_image.width }}"
-                height="{{ mobile_image.height }}"
-              >
-            {%- endif -%}
+    <div class="banner relative{% if has_banner_bg %} media--{{ section.settings.image_height }} mobile:media--{{ section.settings.image_height_mobile }}{% endif %}">
+      {%- if bg_style == 'outlet' and outlet_gradient != blank -%}
+        {%- comment -%} Gradient applied to the overlay span (fills .banner, inherits the section's rounding/curves). {%- endcomment -%}
+        <span class="banner__overlay banner__custom absolute top-0 left-0 w-full h-full pointer-events-none" style="{{ outlet_gradient }}"></span>
+      {%- elsif bg_style == 'custom' -%}
+        <div class="banner__media banner__custom block w-full h-full overflow-hidden" style="background: {{ section.settings.gradient_background | default: section.settings.color_background }};"></div>
+      {%- elsif desktop_image != blank -%}
+          <media-element class="banner__media block w-full h-full overflow-hidden"{% if section.settings.enable_parallax %} data-parallax="0.3" data-parallax-dir="{{ section.settings.parallax_direction }}"{% endif %}>
+            {%- capture sizes -%}{% if section.settings.full_width %}100vw{% else %}min({{ settings.page_width }}px, 100vw){% endif %}{%- endcapture -%}
+            <picture class="media media--height block w-full h-full relative overflow-hidden" is="animate-picture" data-animate="zoom-out">
+              {%- if mobile_image -%}
+                <source
+                  media="(max-width: 767px)"
+                  srcset="{{ mobile_image | image_url: width: '400x' }} 400w, {{ mobile_image | image_url: width: '600x' }} 600w, {{ mobile_image | image_url: width: '800x' }} 800w, {{ mobile_image | image_url: width: '1000x' }} 1000w"
+                  width="{{ mobile_image.width }}"
+                  height="{{ mobile_image.height }}"
+                >
+              {%- endif -%}
 
-            {{- desktop_image | image_url: width: desktop_image.width | image_tag: loading: loading, fetchpriority: fetchpriority, sizes: sizes, widths: '300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200', is: lazyimage, alt: collection_alt -}}
-          </picture>
-        </media-element>
-        <span class="banner__overlay absolute top-0 left-0 w-full h-full pointer-events-none"></span>
+              {{- desktop_image | image_url: width: desktop_image.width | image_tag: loading: loading, fetchpriority: fetchpriority, sizes: sizes, widths: '300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200', is: lazyimage, alt: collection_alt -}}
+            </picture>
+          </media-element>
+          <span class="banner__overlay absolute top-0 left-0 w-full h-full pointer-events-none"></span>
       {%- endif -%}
-    
+
       {%- if section.blocks.size > 0 -%}
-        <div class="banner__content overflow-hidden{% if desktop_image != blank %} absolute z-1 top-0 left-0 w-full h-full{% endif %}">
+        <div class="banner__content overflow-hidden{% if has_banner_bg %} absolute z-1 top-0 left-0 w-full h-full{% endif %}">
           <div class="page-width w-full h-full flex {{ section.settings.content_position }} {{ section.settings.content_position_mobile }}">
             <div class="banner__box md:text-{{ section.settings.text_alignment }} text-{{ section.settings.text_alignment_mobile }}">
               {%- assign delay = 0 -%}
@@ -85,8 +212,26 @@
                             </a>
                           </li>
                           {%- if block.settings.show_collections_link -%}
+                            {%- liquid
+                              assign mid_label = 'general.breadcrumbs.collections' | t
+                              assign mid_url = routes.collections_url
+                              assign use_custom = false
+                              if block.settings.custom_link_label != blank and block.settings.custom_link_url != blank
+                                if block.settings.custom_link_outlets_only
+                                  if outlet_for_collection != blank
+                                    assign use_custom = true
+                                  endif
+                                else
+                                  assign use_custom = true
+                                endif
+                              endif
+                              if use_custom
+                                assign mid_label = block.settings.custom_link_label
+                                assign mid_url = block.settings.custom_link_url
+                              endif
+                            -%}
                             <li class="flex items-center gap-4 md:gap-6">
-                              <a class="block" href="{{ routes.collections_url }}" is="magnet-link">{{ 'general.breadcrumbs.collections' | t }}</a>
+                              <a class="block" href="{{ mid_url }}" is="magnet-link">{{ mid_label }}</a>
                             </li>
                           {%- endif -%}
                           {%- if block.settings.show_collection_title -%}
@@ -153,6 +298,19 @@
       "label": "t:sections.main-collection-banner.settings.show_image.label",
       "info": "t:sections.main-collection-banner.settings.show_image.info",
       "default": true
+    },
+    {
+      "visible_if": "{{ section.settings.show_image == true }}",
+      "type": "select",
+      "id": "background_style",
+      "label": "Background style",
+      "default": "default",
+      "options": [
+        { "value": "default", "label": "Default (theme image)" },
+        { "value": "outlet", "label": "Outlet gradient (metaobject CSS)" },
+        { "value": "custom", "label": "Section gradient (Colors below)" }
+      ],
+      "info": "Default = the photo. Outlet gradient = each outlet's 'Collection banner CSS' from its metaobject (falls back to the photo if empty). Section gradient = the Background gradient you pick in Colors below."
     },
     {
       "visible_if": "{{ section.settings.show_image == true }}",
@@ -514,6 +672,39 @@
           ],
           "default": "title-xl",
           "label": "t:sections.global.settings.title_size.label"
+        },
+        {
+          "type": "paragraph",
+          "content": "These are the DEFAULTS for every collection. To give a single collection its own font/size/alignment, set its metafields (Collection title font / size / alignment) in the collection's admin page — those override the values below."
+        },
+        {
+          "type": "text",
+          "id": "title_font",
+          "label": "Custom font (Google Fonts)",
+          "info": "Exact Google Fonts family name, e.g. EB Garamond. Overrides the theme heading font. Leave empty to keep the theme default."
+        },
+        {
+          "type": "range",
+          "id": "title_size_px",
+          "min": 0,
+          "max": 200,
+          "step": 2,
+          "unit": "px",
+          "label": "Custom font size",
+          "info": "0 = use the size preset above.",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "title_align",
+          "label": "Title alignment",
+          "default": "inherit",
+          "options": [
+            { "value": "inherit", "label": "Inherit (use section alignment)" },
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ]
         }
       ]
     },
@@ -631,6 +822,29 @@
           "id": "show_collection_title",
           "label": "t:sections.main-collection-banner.blocks.breadcrumb.settings.show_collection_title.label",
           "default": true
+        },
+        {
+          "type": "header",
+          "content": "Custom middle link"
+        },
+        {
+          "type": "text",
+          "id": "custom_link_label",
+          "label": "Label",
+          "info": "Overrides the default \"Collections\" crumb, e.g. Outlets. Needs a Link below."
+        },
+        {
+          "type": "url",
+          "id": "custom_link_url",
+          "label": "Link",
+          "info": "Where the label goes, e.g. your Outlets page."
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_link_outlets_only",
+          "label": "Only on outlet collections",
+          "default": true,
+          "info": "On: only outlet collections use this link; other collections keep \"Collections\". Off: applies to every collection."
         }
       ]
     },

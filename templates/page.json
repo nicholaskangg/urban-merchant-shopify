@@ -12,19 +12,135 @@
     "main-page": {
       "type": "main-page",
       "settings": {
-        "heading_size": "title-xl tracking-heading",
-        "heading_alignment": "text-left",
+        "heading_size": "title-md",
+        "heading_alignment": "text-center",
         "heading_tag": "h1",
         "text_size": "text-base",
         "padding_top": 72,
-        "padding_bottom": 120,
+        "padding_bottom": 28,
         "divider": false,
         "narrow": true,
         "rounded": false
       }
+    },
+    "outlets_list_teY3da": {
+      "type": "outlets-list",
+      "blocks": {
+        "outlet_4nWq9G": {
+          "type": "outlet",
+          "settings": {
+            "outlet": "the-coastal-settlement",
+            "image": "shopify://shop_images/TCS01.avif",
+            "image_hover": "shopify://shop_images/TCS02.jpg",
+            "name": "The Coastal Settlement",
+            "name_tag": "h2",
+            "description": "<p>Take home the nostalgic charm of 1970s Old Singapore. Inspired by antique lanterns and warm ambiance, this curated collection beautifully captures the venue’s rustic elegance and unique eclectic vibe.</p>",
+            "address": "",
+            "map_url": "",
+            "concept_link": "shopify://pages/contact",
+            "collection": ""
+          }
+        },
+        "outlet_3GqtqV": {
+          "type": "outlet",
+          "settings": {
+            "outlet": "coolies-union",
+            "name": "",
+            "name_tag": "h3",
+            "description": "",
+            "address": "",
+            "map_url": "",
+            "concept_link": "",
+            "collection": ""
+          }
+        },
+        "outlet_4paxkk": {
+          "type": "outlet",
+          "settings": {
+            "outlet": "vietnam-harvest",
+            "name": "",
+            "name_tag": "h3",
+            "description": "",
+            "address": "",
+            "map_url": "",
+            "concept_link": "",
+            "collection": ""
+          }
+        },
+        "outlet_rYEMtw": {
+          "type": "outlet",
+          "settings": {
+            "outlet": "long-zhuang",
+            "name": "",
+            "name_tag": "h3",
+            "description": "",
+            "address": "",
+            "map_url": "",
+            "concept_link": "",
+            "collection": ""
+          }
+        },
+        "outlet_AEtgUm": {
+          "type": "outlet",
+          "settings": {
+            "outlet": "jiu-zhuang",
+            "name": "",
+            "name_tag": "h3",
+            "description": "",
+            "address": "",
+            "map_url": "",
+            "concept_link": "",
+            "collection": ""
+          }
+        },
+        "outlet_BqDRaP": {
+          "type": "outlet",
+          "settings": {
+            "outlet": "",
+            "name": "",
+            "name_tag": "h3",
+            "description": "",
+            "address": "",
+            "map_url": "",
+            "concept_link": "",
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "outlet_4nWq9G",
+        "outlet_3GqtqV",
+        "outlet_4paxkk",
+        "outlet_rYEMtw",
+        "outlet_AEtgUm",
+        "outlet_BqDRaP"
+      ],
+      "name": "Outlets",
+      "settings": {
+        "heading": "",
+        "heading_size": "title-md",
+        "heading_tag": "h2",
+        "columns": 3,
+        "image_ratio": "wide",
+        "image_fit": "cover",
+        "concept_label": "View concept",
+        "shop_label": "Shop collection",
+        "copy_label": "Copy address",
+        "copied_label": "Copied!",
+        "map_label": "Directions",
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "full_width": false,
+        "rounded": false,
+        "divider": false,
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
     }
   },
   "order": [
-    "main-page"
+    "main-page",
+    "outlets_list_teY3da"
   ]
 }

@@ -187,8 +187,8 @@
         "color_text": "#171717",
         "color_background": "#ffffff",
         "color_localization": "",
-        "padding_top": 32,
-        "padding_bottom": 32,
+        "padding_top": 24,
+        "padding_bottom": 24,
         "full_width": true,
         "rounded": true
       }

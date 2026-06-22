@@ -52,7 +52,7 @@
       <li>
         <details is="details-mega" trigger="{% if section.settings.hover_menu %}hover{% else %}click{% endif %}" level="top" {{ mega_menu_block.shopify_attributes }}>
           <summary data-link="{{ link.url }}" class="z-2 relative{% if section.settings.menu_active == 'block' %} rounded-full{% endif %}">
-            <magnet-element class="menu__item text-sm-lg flex items-center font-medium z-2 relative cursor-pointer"{% if section.settings.menu_active == 'block' %} data-magnet="0"{% endif %}>
+            <magnet-element class="menu__item text-sm-lg flex items-center font-medium z-2 relative cursor-pointer"{% if link.active and link.url != routes.root_url %} aria-current="page"{% endif %} data-magnet="0">
               {%- unless section_rendering_api -%}
                 <api-button class="api-only" data-id="HeaderNavMega-{{ section.id }}-{{ forloop.index }}-{{ context }}" data-section-id="{{ section.id }}"></api-button>
               {%- endunless -%}
@@ -85,7 +85,7 @@
       <li>
         <details is="details-dropdown" trigger="{% if section.settings.hover_menu %}hover{% else %}click{% endif %}" level="top">
           <summary data-link="{{ link.url }}" class="z-2 relative{% if section.settings.menu_active == 'block' %} rounded-full{% endif %}">
-            <magnet-element class="menu__item text-sm-lg flex items-center font-medium z-2 relative cursor-pointer"{% if section.settings.menu_active == 'block' %} data-magnet="0"{% endif %}>
+            <magnet-element class="menu__item text-sm-lg flex items-center font-medium z-2 relative cursor-pointer"{% if link.active and link.url != routes.root_url %} aria-current="page"{% endif %} data-magnet="0">
               <span class="btn-text" data-text>
                 {%- liquid
                   echo link.title
@@ -147,7 +147,7 @@
       </li>
     {%- else -%}
       <li>
-        <a href="{{ link.url }}" class="menu__item text-sm-lg flex items-center font-medium z-2 relative cursor-pointer" is="magnet-link"{% if section.settings.menu_active == 'block' %} data-magnet="0"{% endif %}>
+        <a href="{{ link.url }}" class="menu__item text-sm-lg flex items-center font-medium z-2 relative cursor-pointer" is="magnet-link"{% if link.current and link.url != routes.root_url %} aria-current="page"{% endif %} data-magnet="0">
           <span class="btn-text" data-text>{{ link.title }}</span>
           {%- if section.settings.menu_active == 'block' -%}
             <span class="btn-text btn-duplicate">{{ link.title }}</span>

@@ -1,0 +1,320 @@
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --fpl-cols: {{ section.settings.columns }};
+    {%- render 'section-variables', section: section -%}
+  }
+  #shopify-section-{{ section.id }} .fpl {
+    display: grid;
+    grid-template-columns: repeat(var(--fpl-cols), minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 3.5rem);
+  }
+  @media screen and (max-width: 767px) {
+    #shopify-section-{{ section.id }} .fpl { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+  #shopify-section-{{ section.id }} .fpl__col { display: flex; flex-direction: column; }
+  #shopify-section-{{ section.id }} .fpl__header {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgb(var(--color-foreground) / 0.3);
+  }
+  #shopify-section-{{ section.id }} .fpl__heading {
+    font-family: var(--font-heading-family);
+    font-style: var(--font-heading-style);
+    font-size: clamp(1.4rem, 2vw, 2rem);
+    line-height: 1;
+  }
+  #shopify-section-{{ section.id }} .fpl__header .icon { width: 2rem; height: auto; flex-shrink: 0; }
+  #shopify-section-{{ section.id }} .fpl__header:hover .fpl__heading,
+  #shopify-section-{{ section.id }} .fpl__header:focus-visible .fpl__heading {
+    font-style: italic;
+  }
+  #shopify-section-{{ section.id }} .fpl__media {
+    display: block;
+    margin-top: 1.5rem;
+    aspect-ratio: var(--fpl-ratio, 3 / 4);
+  }
+  #shopify-section-{{ section.id }} .fpl__media--adapt { aspect-ratio: auto; }
+  #shopify-section-{{ section.id }} .fpl__img {
+    width: 100%; height: 100%;
+    object-fit: {{ section.settings.image_fit }};
+  }
+  #shopify-section-{{ section.id }} .fpl__foot { margin-top: 1.25rem; }
+  #shopify-section-{{ section.id }} .fpl__row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+  #shopify-section-{{ section.id }} .fpl__subtitle { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.85; }
+  #shopify-section-{{ section.id }} .fpl__price { font-size: 0.72rem; letter-spacing: 0.06em; white-space: nowrap; }
+  #shopify-section-{{ section.id }} .fpl__title { margin-top: 0.45rem; font-size: 1rem; }
+  /* Shop now: smoothly revealed on hover (collapses when idle) */
+  #shopify-section-{{ section.id }} .fpl__shop-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+  }
+  #shopify-section-{{ section.id }} .fpl__shop-inner { overflow: hidden; min-height: 0; }
+  #shopify-section-{{ section.id }} .fpl__col:hover .fpl__shop-wrap,
+  #shopify-section-{{ section.id }} .fpl__col:focus-within .fpl__shop-wrap { grid-template-rows: 1fr; }
+  #shopify-section-{{ section.id }} .fpl__shop { display: block; width: 100%; margin-top: 1.25rem; text-align: center; }
+  @media (hover: none) {
+    #shopify-section-{{ section.id }} .fpl__shop-wrap { grid-template-rows: 1fr; }
+  }
+</style>
+
+{%- if section.blocks.size > 0 -%}
+  <div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}">
+    <div class="page-width{% if section.settings.full_width %} page-width--full{% endif %} relative">
+      {%- if section.settings.heading != blank -%}
+        <{{ section.settings.heading_tag | default: 'h2' }} class="fpl__section-heading heading {{ section.settings.heading_size }} mb-8">{{ section.settings.heading }}</{{ section.settings.heading_tag | default: 'h2' }}>
+      {%- endif -%}
+      <div class="fpl">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign collection = block.settings.collection
+            assign product = block.settings.product
+            assign heading = block.settings.heading | default: collection.title | default: 'Collection'
+            assign image = block.settings.image | default: product.featured_image
+            assign collection_url = collection.url | default: '#'
+            assign product_url = product.url | default: collection_url
+            assign ratio_class = ''
+            if section.settings.image_ratio == 'adapt'
+              assign ratio_class = ' fpl__media--adapt'
+            endif
+          -%}
+          <div class="fpl__col"
+            {% if section.settings.image_ratio == 'square' %}style="--fpl-ratio: 1 / 1;"{% elsif section.settings.image_ratio == 'landscape' %}style="--fpl-ratio: 4 / 3;"{% elsif section.settings.image_ratio == 'portrait' %}style="--fpl-ratio: 3 / 4;"{% endif %}
+            {{ block.shopify_attributes }}>
+            <a class="fpl__header" href="{{ collection_url }}">
+              <{{ block.settings.heading_tag | default: 'h3' }} class="fpl__heading">{{ heading }}</{{ block.settings.heading_tag | default: 'h3' }}>
+              {%- render 'icon', icon: 'arrow-right-long' -%}
+            </a>
+
+            <a class="fpl__media{{ ratio_class }} media block relative overflow-hidden" href="{{ product_url }}" aria-label="{{ product.title | default: heading | escape }}">
+              {%- if image != blank -%}
+                {{ image | image_url: width: 1100 | image_tag: loading: 'lazy', widths: '300,500,700,900,1100', sizes: '(min-width: 768px) 33vw, 100vw', is: 'lazy-image', class: 'fpl__img' }}
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder fpl__img' }}
+              {%- endif -%}
+            </a>
+
+            {%- if product != blank -%}
+              <div class="fpl__foot">
+                <div class="fpl__row">
+                  {%- assign subtitle = block.settings.subtitle | default: product.vendor -%}
+                  <span class="fpl__subtitle">{{ subtitle }}</span>
+                  <span class="fpl__price">{{ product.price | money }}</span>
+                </div>
+                <span class="fpl__title block">{{ product.title }}</span>
+                <div class="fpl__shop-wrap">
+                  <div class="fpl__shop-inner">
+                    <a class="fpl__shop button button--primary" href="{{ product_url }}">{{ section.settings.button_label | default: 'Shop now' }}</a>
+                  </div>
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Featured products list",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Section heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Section heading size",
+      "default": "title-md",
+      "options": [
+        { "value": "title-sm", "label": "Small" },
+        { "value": "title-md", "label": "Medium" },
+        { "value": "title-lg tracking-heading", "label": "Large" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Section heading tag",
+      "info": "Controls the HTML tag for SEO/structure (size is set above). Use H1 only once per page.",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "p", "label": "Paragraph" },
+        { "value": "span", "label": "Span" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns (desktop)",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "default": "portrait",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "landscape", "label": "Landscape (4:3)" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "default": "contain",
+      "options": [
+        { "value": "contain", "label": "Contain (no crop)" },
+        { "value": "cover", "label": "Cover (fill / may crop)" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Hover button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "Background"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_background",
+      "label": "Background gradient"
+    },
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "rounded",
+      "label": "Rounded",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "Show divider",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection",
+          "info": "The header links here."
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Header text",
+          "info": "Defaults to the collection title."
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "Header tag",
+          "info": "HTML tag for the column header (size unchanged). H3 suits a sub-heading under the section H2.",
+          "default": "h3",
+          "options": [
+            { "value": "h1", "label": "H1" },
+            { "value": "h2", "label": "H2" },
+            { "value": "h3", "label": "H3" },
+            { "value": "h4", "label": "H4" },
+            { "value": "p", "label": "Paragraph" },
+            { "value": "span", "label": "Span" }
+          ]
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Featured product",
+          "info": "Image, title & price come from here; Shop now links to its product page."
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "info": "Small line above the title (e.g. ROSE). Defaults to product vendor."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image override",
+          "info": "Defaults to the product's featured image."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Featured products list",
+      "blocks": [
+        { "type": "column" },
+        { "type": "column" },
+        { "type": "column" }
+      ]
+    }
+  ]
+}
+{% endschema %}

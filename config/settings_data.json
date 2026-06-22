@@ -9,8 +9,9 @@
  */
 {
   "current": {
-    "logo": "shopify://shop_images/Rhythm_Ride_logo_no_space.png",
-    "logo_width": 110,
+    "logo": "shopify://shop_images/um-logo.png",
+    "white_logo": "shopify://shop_images/um-logo-white.png",
+    "logo_width": 115,
     "logo_mobile": "",
     "white_logo_mobile": "",
     "logo_width_mobile": 85,
@@ -42,7 +43,7 @@
     "color_info_text": "#b45309",
     "color_info_background": "#fffbeb",
     "type_header_font": "inter_n7",
-    "type_header_line_height": 1,
+    "type_header_line_height": 1.1,
     "type_header_spacing": -30,
     "type_header_capitalize": false,
     "type_body_font": "inter_n4",
@@ -142,6 +143,10 @@
     "tab_attention_message_1": "Something we said?",
     "tab_attention_message_2": "We're still here!",
     "tab_attention_message_delay": 3,
+    "customfont1_name": "TropicalSweet",
+    "customfont1_src": "TropicalSweet.woff2",
+    "customfont2_name": "OldEnglish",
+    "customfont2_src": "OldEnglish.woff2",
     "checkout_logo_position": "left",
     "checkout_logo_size": "small",
     "checkout_body_background_color": "#ffffff",

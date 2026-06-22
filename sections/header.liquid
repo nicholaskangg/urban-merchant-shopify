@@ -12,6 +12,21 @@
     --color-localization: {{ section.settings.color_localization.rgb }};
   }
 
+  {%- if section.settings.sticky_header_type != 'none' -%}
+  /* CSS-level sticky — mirrors .header-sticky from theme.js/beforeInit() but works
+     immediately at stylesheet load, before the sticky-header custom element upgrades.
+     body { overflow-x: clip } overrides theme.css's overflow-x:hidden — "clip" does
+     not create a scroll container (unlike "hidden"), so position:sticky works in Safari. */
+  body { overflow-x: clip; }
+  #shopify-section-{{ section.id }} {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    inset-block-start: 0;
+    z-index: 20;
+  }
+  {%- endif -%}
+
   @media screen and (min-width: 1024px) {
     /* Center menu: roomy spacing + full-height divider between top-level items */
     #shopify-section-{{ section.id }} .header__navigation .header__menu > ul {
@@ -21,16 +36,6 @@
     #shopify-section-{{ section.id }} .header__navigation .header__menu > ul > li {
       position: relative;
     }
-    #shopify-section-{{ section.id }} .header__navigation .header__menu > ul > li + li::before {
-      content: '';
-      position: absolute;
-      left: -0.75rem;
-      top: calc(-1 * var(--section-padding-top));
-      bottom: calc(-1 * var(--section-padding-bottom));
-      width: 1px;
-      background-color: rgb(var(--color-foreground) / 0.45);
-      pointer-events: none;
-    }
     /* Center menu (Shop / Outlets): EB Garamond, italic on hover */
     #shopify-section-{{ section.id }} .header__navigation .menu__item {
       font-family: 'EB Garamond', var(--font-navigation-family);
@@ -38,7 +43,10 @@
       font-size: {{ section.settings.center_menu_font_size | default: 18 }}px;
       padding-inline: 1rem;          /* larger hover / click area */
     }
-    #shopify-section-{{ section.id }} .header__navigation .menu__item:hover {
+    #shopify-section-{{ section.id }} .header__navigation .menu__item:hover,
+    #shopify-section-{{ section.id }} .header__navigation .menu__item.is-trigger-active,
+    #shopify-section-{{ section.id }} .header__navigation .menu__item[aria-current="page"],
+    #shopify-section-{{ section.id }} .header__navigation details[open] .menu__item {
       font-style: italic;
     }
     /* Stop the magnet "follow cursor" motion so the text doesn't jitter on hover */
@@ -66,6 +74,29 @@
     #shopify-section-{{ section.id }} .header__secondary-link:hover {
       opacity: 0.6;
     }
+  }
+
+  /* mobile-dock.css hides the header on scroll-down for ALL sticky types on mobile.
+     Override: when type=always, the header must never be translated off-screen. */
+  @media screen and (max-width: 767px) {
+    .header-sticky.header-hidden[data-sticky-type=always] .header,
+    .header-sticky.header-hidden .header[data-sticky-type=always] {
+      transform: none !important;
+    }
+  }
+
+  /* Solidify the transparent header whenever the mouse is over the nav bar (mirrors the dropdown-open state). */
+  .nav-hover .header-transparent:not(.header-scrolled) .header {
+    --animation-nav-delay: 0s;
+    --header-background-opacity: 1;
+    --header-logo-opacity: 1;
+    color: rgb(var(--color-foreground));
+  }
+  .nav-hover .header-section:not(.header-scrolled) .header__corner {
+    --tw-translate-x: 0;
+    width: var(--border-radius);
+    height: var(--border-radius);
+    color: rgb(var(--color-background));
   }
 </style>
 
@@ -164,6 +195,22 @@
 {%- else -%}
   <overlay-element class="overlay opacity-0 z-1 fixed left-0 w-full pointer-events-none"></overlay-element>
 {%- endif -%}
+
+<script>
+  (function () {
+    if (window.__navHoverBound) return;
+    window.__navHoverBound = true;
+    /* Use the .header-section wrapper (parent of <header is="sticky-header">) so we never
+       touch the custom element directly — avoids any risk of interfering with its upgrade. */
+    var bind = function () {
+      document.querySelectorAll('.header-section').forEach(function (sec) {
+        sec.addEventListener('mouseenter', function () { document.body.classList.add('nav-hover'); });
+        sec.addEventListener('mouseleave', function () { document.body.classList.remove('nav-hover'); });
+      });
+    };
+    if (document.readyState !== 'loading') bind(); else document.addEventListener('DOMContentLoaded', bind);
+  })();
+</script>
 
 {%- if request.design_mode -%}
   <script>

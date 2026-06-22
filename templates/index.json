@@ -16,14 +16,26 @@
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/3-3.webp",
-            "heading": "Not Just Another Bicycle Shop",
-            "heading_size": "title-lg tracking-heading",
+            "heading": "Super3Grove™",
+            "text": "<p><em>Iconically Inspired by the stunning Supertree Grove</em></p>",
+            "text_font": "domine_n4",
+            "text_backdrop": true,
+            "text_backdrop_color": "#000000",
+            "heading_size": "title-sm",
             "heading_tag": "h2",
             "button_label": "Shop Collections",
             "button_link": "",
             "button_style": "primary",
             "button_external": false,
-            "button_icon": false
+            "button_icon": false,
+            "color_button_text": "",
+            "color_button_background": "#ffddbf",
+            "color_button_gradient": "",
+            "heading_font": "EB Garamond",
+            "heading_font_size": 0,
+            "heading_width": 50,
+            "heading_position": "middle-center",
+            "button_position": "middle-center"
           }
         },
         "slide-2": {
@@ -31,13 +43,25 @@
           "settings": {
             "image": "shopify://shop_images/toronto_2_50d6c6bc-ec23-4c5e-89a2-f7a6d79ffb67.webp",
             "heading": "Curated for the adventurous",
+            "text": "",
+            "text_font": "assistant_n4",
+            "text_backdrop": false,
+            "text_backdrop_color": "#000000",
             "heading_size": "title-md",
             "heading_tag": "h2",
             "button_label": "Shop Helmets",
             "button_link": "",
             "button_style": "primary",
             "button_external": false,
-            "button_icon": false
+            "button_icon": false,
+            "color_button_text": "",
+            "color_button_background": "",
+            "color_button_gradient": "",
+            "heading_font": "",
+            "heading_font_size": 0,
+            "heading_width": 45,
+            "heading_position": "bottom-left",
+            "button_position": "bottom-right"
           }
         },
         "slide-3": {
@@ -54,7 +78,15 @@
             "button_link": "",
             "button_style": "primary",
             "button_external": false,
-            "button_icon": false
+            "button_icon": false,
+            "color_button_text": "",
+            "color_button_background": "",
+            "color_button_gradient": "",
+            "heading_font": "",
+            "heading_font_size": 0,
+            "heading_width": 45,
+            "heading_position": "bottom-left",
+            "button_position": "bottom-right"
           }
         }
       },
@@ -71,7 +103,7 @@
         "disable_hover_pause": true,
         "show_slide_info": true,
         "show_navigation": false,
-        "image_height": "750px",
+        "image_height": "650px",
         "content_width": "small",
         "image_height_mobile": "500px",
         "accessibility_info": "Slideshow about our brand",
@@ -84,7 +116,7 @@
         "color_overlay": "#171717",
         "overlay_opacity": 20,
         "padding_top": 0,
-        "padding_bottom": 0,
+        "padding_bottom": 32,
         "divider": false,
         "full_width": true,
         "rounded": false,
@@ -92,66 +124,63 @@
         "parallax_direction": "vertical"
       }
     },
-    "rich-text-1": {
-      "type": "rich-text",
+    "featured_products_list_GXiKAY": {
+      "type": "featured-products-list",
       "blocks": {
-        "text": {
-          "type": "text",
+        "column_96RQBE": {
+          "type": "column",
           "settings": {
-            "text": "<p>From British hand-built Pashley bicycles to foldies for the daily commuter, we take time to understand how and where you cycle. By customising to your needs, you leave with a bike that truly fits you – not just a product, but a <em>lifestyle</em> on two wheels.</p>",
-            "text_font": "body",
-            "text_size": "subtext-md",
-            "text_max_size": 32,
-            "text_line_height": 1.6,
-            "text_letter_spacing": 0,
-            "text_capitalize": false,
-            "secondary_color": false,
-            "highlighted_text": "marker",
-            "highlighted_scribble": "circle"
+            "collection": "",
+            "heading": "Games",
+            "heading_tag": "h1",
+            "product": "",
+            "subtitle": ""
           }
         },
-        "liquid_nHtEfU": {
-          "type": "liquid",
-          "disabled": true,
+        "column_nAjnDA": {
+          "type": "column",
           "settings": {
-            "liquid": "{% liquid\n  assign ring_1 = 'CERTIFIED SHIMANO TECHNICIAN'\n  assign ring_2 = 'SHIMANO AUTHORIZED DEALER'\n  assign ring_3 = 'PASHLEY PREMIUM STOCKIST'\n  assign ring_4 = 'BROOKS AUTHORIZED DEALER'\n\n  assign ring_1_url = 'shimano-certified.png'\n  assign ring_2_url = 'shimano-authorized-dealer.png'\n  assign ring_3_url = 'pashley-premier-stockist.png'\n  assign ring_4_url = 'brooks-authorized-dealer.png'\n%}\n\n\n\n<style>.logo-badges {\n    --gap: 52px;\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: left;\n    align-items: center;\n    gap: var(--gap);\n    padding: 25px 20px;;\n    --ring-gap: 14px;\n    --ring-font: 12px;\n}\n\n.rte :is(img,video) {\n  margin-block: 0;\n}\n\n.logo-badge {\n    position: relative;\n    display: inline-grid;\n    place-items: flex-start;\n}\n\n.logo-badge__img {\n    display: block;\n    max-height: var(--logo-size, 56px);\n    width: auto;\n    height: auto;\n    border-radius: 999px;\n    position: relative;\n    z-index: 1\n}\n\n.logo-badge, .logo-badge__ring {\n      overflow: visible;\n  }\n\n\n.logo-badge__ring {\n    position: absolute;\n    inset: -14px;\n    z-index: 2;\n    pointer-events: none;\n    inset: calc(var(--ring-gap) * -1);\n}\n\n.logo-badge__text {\n    letter-spacing: 1px;\n    text-transform: uppercase;\n    fill: #111827;\n    font-size: var(--ring-font, 12px);\n}\n\n.logo-badge__ring{\n  transform-origin: 50% 50%;\n  animation: ringSpin var(--ring-speed, 10s) linear infinite;\n}\n\n/* optional: pause on hover */\n.logo-badge:hover .logo-badge__ring{\n  animation-play-state: paused;\n}\n\n@keyframes ringSpin{\n  to{ transform: rotate(360deg); }\n}\n\n@media (max-width: 749px){\n  .logo-badges {\n--gap: 32px;\n        --logo-size: 44px;\n        justify-content: center;\n        --ring-gap: 8px;\n        --ring-font: 12px;   /* optional */\n    }\n}\n\n\n</style>\n\n<div class=\"logo-badges\">\n  <!-- Badge 1 -->\n  <div class=\"logo-badge\">\n    <img class=\"logo-badge__img\" src=\"{{ ring_1_url | file_url }}\" alt=\"Shimano\">\n    <svg class=\"logo-badge__ring\" viewBox=\"0 0 100 100\" aria-hidden=\"true\" focusable=\"false\">\n      <defs>\n        <path id=\"ringPath-1\" d=\"M50,50 m0,42 a42,42 0 1,1 0,-84 a42,42 0 1,1 0,84\"></path>\n      </defs>\n      <text class=\"logo-badge__text\" text-anchor=\"middle\">\n        <textPath href=\"#ringPath-1\" xlink:href=\"#ringPath-1\" startOffset=\"50%\">\n          {{ ring_1 }}\n        </textPath>\n      </text>\n    </svg>\n  </div>\n\n  <!-- Badge 2 -->\n  <div class=\"logo-badge\">\n    <img class=\"logo-badge__img\" src=\"{{ ring_2_url | asset_url }}\" alt=\"Brooks\">\n    <svg class=\"logo-badge__ring\" viewBox=\"0 0 100 100\" aria-hidden=\"true\" focusable=\"false\">\n      <defs>\n        <path id=\"ringPath-2\" d=\"M50,50 m0,42 a42,42 0 1,1 0,-84 a42,42 0 1,1 0,84\"></path>\n      </defs>\n      <text class=\"logo-badge__text\" text-anchor=\"middle\">\n        <textPath href=\"#ringPath-2\" xlink:href=\"#ringPath-2\" startOffset=\"50%\">\n          {{ ring_2 }}\n        </textPath>\n      </text>\n    </svg>\n  </div>\n\n  <!-- Badge 3 -->\n  <div class=\"logo-badge\">\n    <img class=\"logo-badge__img\" src=\"{{ ring_3_url | asset_url }}\" alt=\"Pashley\">\n    <svg class=\"logo-badge__ring\" viewBox=\"0 0 100 100\" aria-hidden=\"true\" focusable=\"false\">\n      <defs>\n        <path id=\"ringPath-3\" d=\"M50,50 m0,42 a42,42 0 1,1 0,-84 a42,42 0 1,1 0,84\"></path>\n      </defs>\n      <text class=\"logo-badge__text\" text-anchor=\"middle\">\n        <textPath href=\"#ringPath-3\" xlink:href=\"#ringPath-3\" startOffset=\"50%\">\n          {{ ring_3 }}\n        </textPath>\n      </text>\n    </svg>\n  </div>\n  <!-- Badge 4 -->\n  <div class=\"logo-badge\">\n    <img class=\"logo-badge__img\" src=\"{{ ring_4_url | asset_url }}\" alt=\"Brooks Authorized Dealer\">\n    <svg class=\"logo-badge__ring\" viewBox=\"0 0 100 100\" aria-hidden=\"true\" focusable=\"false\">\n      <defs>\n        <path id=\"ringPath-4\" d=\"M50,50 m0,42 a42,42 0 1,1 0,-84 a42,42 0 1,1 0,84\"></path>\n      </defs>\n      <text class=\"logo-badge__text\" text-anchor=\"middle\">\n        <textPath href=\"#ringPath-4\" xlink:href=\"#ringPath-4\" startOffset=\"50%\">\n          {{ ring_4 }}\n        </textPath>\n      </text>\n    </svg>\n  </div>\n</div>"
+            "collection": "",
+            "heading": "Corporate Gifts",
+            "heading_tag": "h1",
+            "product": "",
+            "subtitle": ""
+          }
+        },
+        "column_3NhTzf": {
+          "type": "column",
+          "settings": {
+            "collection": "",
+            "heading": "",
+            "heading_tag": "h3",
+            "product": "",
+            "subtitle": ""
           }
         }
       },
       "block_order": [
-        "text",
-        "liquid_nHtEfU"
+        "column_96RQBE",
+        "column_nAjnDA",
+        "column_3NhTzf"
       ],
+      "disabled": true,
+      "name": "Featured products list",
       "settings": {
-        "text_alignment": "left",
-        "text_alignment_mobile": "left",
-        "heading": "We believe in helping you find the <em>right</em> bicycle fit.",
+        "heading": "",
         "heading_size": "title-md",
-        "heading_alignment": "text-left md:items-end md:flex-row",
-        "heading_width": "small",
         "heading_tag": "h2",
-        "subheading": "",
-        "description": "",
-        "button_label": "Visit Our Outlet",
-        "button_link": "",
-        "button_external": false,
-        "button_icon": true,
-        "highlighted_text": "scribble",
-        "highlighted_scribble": "basic-underline",
-        "highlighted_reveal": true,
+        "columns": 3,
+        "image_ratio": "portrait",
+        "image_fit": "contain",
+        "button_label": "Shop now",
         "color_text": "",
         "color_background": "",
         "gradient_background": "",
-        "color_highlight": "",
-        "gradient_highlight": "",
-        "color_button_text": "",
-        "color_button_background": "",
-        "color_button_gradient": "",
-        "padding_top": 72,
-        "padding_bottom": 0,
+        "full_width": false,
+        "rounded": false,
         "divider": false,
-        "narrow": false,
-        "rounded": false
+        "padding_top": 48,
+        "padding_bottom": 48
       }
     },
     "collection-list": {
@@ -160,9 +189,9 @@
         "collection-1": {
           "type": "collection",
           "settings": {
-            "collection": "",
-            "title": "All products",
-            "description": "Check out all our products",
+            "collection": "the-coastal-settlement",
+            "title": "Mini Home Furnitures",
+            "description": "",
             "overlay_content": true,
             "color_text": "#ffffff",
             "color_overlay": "#171717",
@@ -173,8 +202,8 @@
           "type": "collection",
           "settings": {
             "collection": "",
-            "title": "Headphones",
-            "description": "Surround yourself in sound",
+            "title": "Table and Lightings",
+            "description": "",
             "overlay_content": false,
             "color_text": "#ffffff",
             "color_overlay": "#171717",
@@ -186,7 +215,7 @@
           "settings": {
             "collection": "",
             "title": "Earphones",
-            "description": "Small design, great sound",
+            "description": "",
             "overlay_content": false,
             "color_text": "#ffffff",
             "color_overlay": "#171717",
@@ -219,6 +248,7 @@
         },
         "collection-6": {
           "type": "collection",
+          "disabled": true,
           "settings": {
             "collection": "",
             "title": "Wireless",
@@ -231,6 +261,7 @@
         },
         "collection-7": {
           "type": "collection",
+          "disabled": true,
           "settings": {
             "collection": "",
             "title": "Gaming",
@@ -243,6 +274,7 @@
         },
         "collection-8": {
           "type": "collection",
+          "disabled": true,
           "settings": {
             "collection": "",
             "title": "Limited",
@@ -270,12 +302,234 @@
         "image_ratio": "square",
         "show_products_count": true,
         "show_view_all": false,
-        "columns": 4,
+        "columns": 5,
         "carousel_on_desktop": true,
         "columns_mobile": "1",
         "swipe_on_mobile": true,
-        "heading": "",
+        "heading": "Categories",
+        "heading_size": "title-sm",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "#e8e8e6",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 24,
+        "padding_bottom": 24,
+        "divider": false,
+        "full_width": false,
+        "rounded": true
+      }
+    },
+    "collection_list_pArjCi": {
+      "type": "collection-list",
+      "blocks": {
+        "collection_nzTgpj": {
+          "type": "collection",
+          "settings": {
+            "collection": "the-coastal-settlement",
+            "title": "Mini Home Furnitures",
+            "description": "",
+            "overlay_content": true,
+            "color_text": "#ffffff",
+            "color_overlay": "#171717",
+            "overlay_opacity": 30
+          }
+        },
+        "collection_7PdYjK": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": "Table and Lightings",
+            "description": "",
+            "overlay_content": false,
+            "color_text": "#ffffff",
+            "color_overlay": "#171717",
+            "overlay_opacity": 30
+          }
+        },
+        "collection_haFecz": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": "Earphones",
+            "description": "",
+            "overlay_content": false,
+            "color_text": "#ffffff",
+            "color_overlay": "#171717",
+            "overlay_opacity": 30
+          }
+        },
+        "collection_XKHUrF": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": "Speakers",
+            "description": "The world’s most immersive sound",
+            "overlay_content": false,
+            "color_text": "#ffffff",
+            "color_overlay": "#171717",
+            "overlay_opacity": 30
+          }
+        },
+        "collection_7Nm3fp": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "title": "Accessories",
+            "description": "Optimal condition for years",
+            "overlay_content": false,
+            "color_text": "#ffffff",
+            "color_overlay": "#171717",
+            "overlay_opacity": 30
+          }
+        },
+        "collection_VGpngx": {
+          "type": "collection",
+          "disabled": true,
+          "settings": {
+            "collection": "",
+            "title": "Wireless",
+            "description": "Headphones to enchant instead of entangle",
+            "overlay_content": false,
+            "color_text": "#ffffff",
+            "color_overlay": "#171717",
+            "overlay_opacity": 30
+          }
+        },
+        "collection_qXiPWx": {
+          "type": "collection",
+          "disabled": true,
+          "settings": {
+            "collection": "",
+            "title": "Gaming",
+            "description": "Dive into the game with every sound",
+            "overlay_content": false,
+            "color_text": "#ffffff",
+            "color_overlay": "#171717",
+            "overlay_opacity": 30
+          }
+        },
+        "collection_MXfcU7": {
+          "type": "collection",
+          "disabled": true,
+          "settings": {
+            "collection": "",
+            "title": "Limited",
+            "description": "Collection for the exceptional",
+            "overlay_content": false,
+            "color_text": "#ffffff",
+            "color_overlay": "#171717",
+            "overlay_opacity": 30
+          }
+        }
+      },
+      "block_order": [
+        "collection_nzTgpj",
+        "collection_7PdYjK",
+        "collection_haFecz",
+        "collection_XKHUrF",
+        "collection_7Nm3fp",
+        "collection_VGpngx",
+        "collection_qXiPWx",
+        "collection_MXfcU7"
+      ],
+      "disabled": true,
+      "settings": {
+        "card_style": "card",
+        "image_type": "collection",
+        "image_ratio": "square",
+        "show_products_count": true,
+        "show_view_all": false,
+        "columns": 3,
+        "carousel_on_desktop": true,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "heading": "The Signature Gift Collection",
         "heading_size": "title-md",
+        "heading_alignment": "text-center md:items-center",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "#f2f2f2",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 52,
+        "padding_bottom": 24,
+        "divider": false,
+        "full_width": false,
+        "rounded": true
+      }
+    },
+    "featured-collections": {
+      "type": "featured-collections",
+      "blocks": {
+        "collection-1": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "products": [],
+            "title": "For Her"
+          }
+        },
+        "collection-2": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "products": [],
+            "title": "For Him"
+          }
+        },
+        "collection-3": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "products": [],
+            "title": "A Business Prospect"
+          }
+        },
+        "collection-4": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "products": [],
+            "title": "An Important Someone"
+          }
+        }
+      },
+      "block_order": [
+        "collection-1",
+        "collection-2",
+        "collection-3",
+        "collection-4"
+      ],
+      "name": "A Gift for the right Occasion",
+      "settings": {
+        "product_limit": 6,
+        "columns": 5,
+        "carousel_on_desktop": true,
+        "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "heading": "Gifts for All Occasions",
+        "heading_size": "title-sm",
         "heading_alignment": "text-left md:items-end md:flex-row",
         "heading_tag": "h2",
         "subheading": "",
@@ -291,11 +545,11 @@
         "color_button_text": "",
         "color_button_background": "",
         "color_button_gradient": "",
-        "padding_top": 100,
+        "padding_top": 24,
         "padding_bottom": 100,
         "divider": false,
         "full_width": false,
-        "rounded": false
+        "rounded": true
       }
     },
     "video-with-text-overlay": {
@@ -344,6 +598,7 @@
         "text",
         "button"
       ],
+      "disabled": true,
       "settings": {
         "transparent_header": false,
         "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
@@ -392,7 +647,7 @@
           "type": "title",
           "settings": {
             "title_size": "product-title-md",
-            "title_size_mobile": "product-title-md",
+            "title_size_mobile": "product-title-sm",
             "show_price": true,
             "show_rating": true
           }
@@ -527,11 +782,15 @@
         "read_more",
         "spinning_text"
       ],
-      "custom_css": [
-        "@media screen and (min-width: 1920px) {.featured-product {gap: var(--grid-gap); padding-inline: calc(var(--grid-gap) * 2); }}"
-      ],
+      "custom_css": [],
       "settings": {
         "product": "",
+        "heading": "Gather and Play",
+        "heading_size": "title-sm",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
         "enable_sticky_info": true,
         "media_size": 64,
         "gallery_layout": "thumbnail",
@@ -544,7 +803,7 @@
         "mobile_layout": "full_width",
         "image_ratio_mobile": "adapt_first",
         "mobile_thumbnail": false,
-        "padding_top": 120,
+        "padding_top": 24,
         "padding_bottom": 0,
         "divider": false,
         "full_width": false,
@@ -577,6 +836,7 @@
         "image-1",
         "image-2"
       ],
+      "disabled": true,
       "settings": {
         "layout": "horizontal",
         "image_height": "750px",
@@ -611,6 +871,7 @@
     },
     "rich-text-2": {
       "type": "rich-text",
+      "disabled": true,
       "custom_css": [
         "@media screen and (min-width: 1536px) and (max-width: 1920px) {.collage, .collage .title-wrapper {padding-inline: 0; }}",
         "@media screen and (min-width: 1920px) {.collage, .collage .title-wrapper {padding-inline: var(--grid-gap); }}"
@@ -649,6 +910,7 @@
     },
     "product-bundle": {
       "type": "product-bundle",
+      "disabled": true,
       "custom_css": [
         "@media screen and (min-width: 1536px) {.product-bundle {flex: 0 0 25%; } .product-bundle__sidebar {width: 100%; }}",
         "@media screen and (min-width: 1920px) {.product-bundle-wrapper {padding-inline: calc(var(--grid-gap) * 2); }}"
@@ -691,51 +953,6 @@
         "padding_bottom": 0,
         "divider": false,
         "full_width": false,
-        "rounded": false
-      }
-    },
-    "scrolling-text-1": {
-      "type": "scrolling-text",
-      "blocks": {
-        "text-1": {
-          "type": "text",
-          "settings": {
-            "text": "<em><strong>Play anything</strong></em>",
-            "text_size": 160,
-            "text_font": "body",
-            "highlighted_text": "stencil",
-            "highlighted_scribble": "circle"
-          }
-        },
-        "text-2": {
-          "type": "text",
-          "settings": {
-            "text": "<em><strong>Day-long comfort</strong></em>",
-            "text_size": 160,
-            "text_font": "body",
-            "highlighted_text": "stencil",
-            "highlighted_scribble": "circle"
-          }
-        }
-      },
-      "block_order": [
-        "text-1",
-        "text-2"
-      ],
-      "settings": {
-        "direction": "left",
-        "speed": 20,
-        "grid_horizontal": 70,
-        "enable_twin": false,
-        "enable_parallax": true,
-        "color_text": "",
-        "color_background": "",
-        "gradient_background": "",
-        "color_highlight": "",
-        "gradient_highlight": "",
-        "padding_top": 120,
-        "padding_bottom": 120,
-        "divider": false,
         "rounded": false
       }
     },
@@ -935,6 +1152,7 @@
         "feed-4",
         "feed-5"
       ],
+      "disabled": true,
       "settings": {
         "columns": 4,
         "carousel_on_desktop": true,
@@ -1028,6 +1246,7 @@
         "timer",
         "button"
       ],
+      "disabled": true,
       "settings": {
         "transparent_header": false,
         "image_height": "750px",
@@ -1177,6 +1396,7 @@
         "testimonial-2",
         "testimonial-3"
       ],
+      "disabled": true,
       "settings": {
         "transparent_header": false,
         "image_height": "750px",
@@ -1199,85 +1419,20 @@
         "parallax_direction": "vertical"
       }
     },
-    "featured-collections": {
-      "type": "featured-collections",
-      "blocks": {
-        "collection-1": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "products": [],
-            "title": "Headphones"
-          }
-        },
-        "collection-2": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "products": [],
-            "title": "Earphones"
-          }
-        },
-        "collection-3": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "products": [],
-            "title": "Speakers"
-          }
-        },
-        "collection-4": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "products": [],
-            "title": "Accessories"
-          }
-        }
-      },
-      "block_order": [
-        "collection-1",
-        "collection-2",
-        "collection-3",
-        "collection-4"
-      ],
-      "settings": {
-        "product_limit": 6,
-        "columns": 4,
-        "carousel_on_desktop": true,
-        "show_view_all": false,
-        "columns_mobile": "1",
-        "swipe_on_mobile": true,
-        "heading": "Best Sellers",
-        "heading_size": "title-md",
-        "heading_alignment": "text-left md:items-end md:flex-row",
-        "heading_tag": "h2",
-        "subheading": "",
-        "description": "",
-        "highlighted_text": "none",
-        "highlighted_scribble": "circle",
-        "highlighted_reveal": false,
-        "color_text": "",
-        "color_background": "",
-        "gradient_background": "",
-        "color_highlight": "",
-        "gradient_highlight": "",
-        "color_button_text": "",
-        "color_button_background": "",
-        "color_button_gradient": "",
-        "padding_top": 100,
-        "padding_bottom": 100,
-        "divider": false,
-        "full_width": false,
-        "rounded": true
-      }
-    },
     "scrolling-text-2": {
       "type": "scrolling-text",
       "blocks": {
         "image-1": {
           "type": "image",
           "settings": {
+            "outlet": "",
+            "cafe_name": "",
+            "cafe_address": "",
+            "caption_font": "assistant_n4",
+            "address_font": "",
+            "caption_size": 15,
+            "address_size": 12,
+            "caption_width": 0,
             "height": 60,
             "link": "",
             "accessibility_info": "",
@@ -1287,6 +1442,14 @@
         "image-2": {
           "type": "image",
           "settings": {
+            "outlet": "",
+            "cafe_name": "",
+            "cafe_address": "",
+            "caption_font": "assistant_n4",
+            "address_font": "",
+            "caption_size": 15,
+            "address_size": 12,
+            "caption_width": 0,
             "height": 60,
             "link": "",
             "accessibility_info": "",
@@ -1296,6 +1459,14 @@
         "image-3": {
           "type": "image",
           "settings": {
+            "outlet": "",
+            "cafe_name": "",
+            "cafe_address": "",
+            "caption_font": "assistant_n4",
+            "address_font": "",
+            "caption_size": 15,
+            "address_size": 12,
+            "caption_width": 0,
             "height": 60,
             "link": "",
             "accessibility_info": "",
@@ -1305,6 +1476,14 @@
         "image-4": {
           "type": "image",
           "settings": {
+            "outlet": "",
+            "cafe_name": "",
+            "cafe_address": "",
+            "caption_font": "assistant_n4",
+            "address_font": "",
+            "caption_size": 15,
+            "address_size": 12,
+            "caption_width": 0,
             "height": 60,
             "link": "",
             "accessibility_info": "",
@@ -1314,6 +1493,14 @@
         "image-5": {
           "type": "image",
           "settings": {
+            "outlet": "",
+            "cafe_name": "",
+            "cafe_address": "",
+            "caption_font": "assistant_n4",
+            "address_font": "",
+            "caption_size": 15,
+            "address_size": 12,
+            "caption_width": 0,
             "height": 60,
             "link": "",
             "accessibility_info": "",
@@ -1323,6 +1510,14 @@
         "image-6": {
           "type": "image",
           "settings": {
+            "outlet": "",
+            "cafe_name": "",
+            "cafe_address": "",
+            "caption_font": "assistant_n4",
+            "address_font": "",
+            "caption_size": 15,
+            "address_size": 12,
+            "caption_width": 0,
             "height": 60,
             "link": "",
             "accessibility_info": "",
@@ -1332,6 +1527,14 @@
         "image-7": {
           "type": "image",
           "settings": {
+            "outlet": "",
+            "cafe_name": "",
+            "cafe_address": "",
+            "caption_font": "assistant_n4",
+            "address_font": "",
+            "caption_size": 15,
+            "address_size": 12,
+            "caption_width": 0,
             "height": 60,
             "link": "",
             "accessibility_info": "",
@@ -1354,6 +1557,9 @@
         "grid_horizontal": 140,
         "enable_twin": true,
         "enable_parallax": true,
+        "enable_swipe_mobile": false,
+        "fade_edges": false,
+        "fade_width": 8,
         "color_text": "",
         "color_background": "#fde68a",
         "gradient_background": "",
@@ -1361,6 +1567,137 @@
         "gradient_highlight": "",
         "padding_top": 36,
         "padding_bottom": 36,
+        "divider": false,
+        "rounded": false
+      }
+    },
+    "scrolling-text-1": {
+      "type": "scrolling-text",
+      "blocks": {
+        "image_eK6Ty9": {
+          "type": "image",
+          "name": "TCS Logo",
+          "settings": {
+            "image": "shopify://shop_images/TCS-LOGO.avif",
+            "outlet": "",
+            "cafe_name": "The Coastal Settlement",
+            "cafe_address": "200 Netheravon Rd, Singapore 508529",
+            "caption_font": "Dancing Script",
+            "address_font": "",
+            "caption_size": 22,
+            "address_size": 14,
+            "caption_width": 240,
+            "height": 80,
+            "link": "https://urban-merchant.com/collections/the-coastal-settlement",
+            "accessibility_info": "",
+            "external": false
+          }
+        },
+        "image_nb9iET": {
+          "type": "image",
+          "name": "Coolies Union Logo",
+          "settings": {
+            "image": "shopify://shop_images/Primary_Logo_black.avif",
+            "outlet": "",
+            "cafe_name": "Coolies' Union",
+            "cafe_address": "9 Duxton Hl, Singapore 089593",
+            "caption_font": "Dancing Script",
+            "address_font": "",
+            "caption_size": 22,
+            "address_size": 14,
+            "caption_width": 0,
+            "height": 80,
+            "link": "",
+            "accessibility_info": "",
+            "external": false
+          }
+        },
+        "image_jnj3f9": {
+          "type": "image",
+          "name": "Jiu Zhuang Logo",
+          "settings": {
+            "image": "shopify://shop_images/JZ-logo.webp",
+            "outlet": "",
+            "cafe_name": "Jiu Zhuang",
+            "cafe_address": "6D Dempsey Rd, Singapore 247664",
+            "caption_font": "Dancing Script",
+            "address_font": "",
+            "caption_size": 22,
+            "address_size": 14,
+            "caption_width": 240,
+            "height": 80,
+            "link": "",
+            "accessibility_info": "",
+            "external": false
+          }
+        },
+        "image_NRyHYq": {
+          "type": "image",
+          "name": "Vietnam Harvest Logo",
+          "settings": {
+            "image": "shopify://shop_images/VN-harvest-logo-black.png",
+            "outlet": "",
+            "cafe_name": "Vietnam Harvest",
+            "cafe_address": "246-248, Bùi Viện, Bến Thành, Hồ Chí Minh 70000, Vietnam",
+            "caption_font": "Dancing Script",
+            "address_font": "",
+            "caption_size": 22,
+            "address_size": 14,
+            "caption_width": 240,
+            "height": 80,
+            "link": "",
+            "accessibility_info": "",
+            "external": false
+          }
+        },
+        "text-1": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<em><strong>Play anything</strong></em>",
+            "text_size": 48,
+            "text_font": "body",
+            "highlighted_text": "stencil",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "text-2": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<em><strong>Day-long comfort</strong></em>",
+            "text_size": 24,
+            "text_font": "body",
+            "highlighted_text": "stencil",
+            "highlighted_scribble": "circle"
+          }
+        }
+      },
+      "block_order": [
+        "image_eK6Ty9",
+        "image_nb9iET",
+        "image_jnj3f9",
+        "image_NRyHYq",
+        "text-1",
+        "text-2"
+      ],
+      "name": "Outet Location - Scrolling Text",
+      "settings": {
+        "direction": "left",
+        "speed": 20,
+        "grid_horizontal": 110,
+        "enable_twin": false,
+        "enable_parallax": false,
+        "enable_swipe_mobile": false,
+        "fade_edges": true,
+        "fade_width": 25,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "padding_top": 24,
+        "padding_bottom": 24,
         "divider": false,
         "rounded": false
       }
@@ -1548,20 +1885,21 @@
   },
   "order": [
     "slideshow",
-    "rich-text-1",
+    "featured_products_list_GXiKAY",
     "collection-list",
+    "collection_list_pArjCi",
+    "featured-collections",
     "video-with-text-overlay",
     "featured-product",
     "image-comparison",
     "rich-text-2",
     "product-bundle",
-    "scrolling-text-1",
     "shop-the-feed",
     "countdown-timer",
     "shop-the-look",
     "testimonials-banner",
-    "featured-collections",
     "scrolling-text-2",
+    "scrolling-text-1",
     "blog-posts-collage",
     "countdown_timer_MtciHm",
     "images_with_text_overlay_W9irdK"

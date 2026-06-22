@@ -1,0 +1,62 @@
+{%- comment -%}
+  SEO / Core-Web-Vitals friendly font loader for a font referenced by family name.
+
+  - If `name` matches a registered custom font (Theme settings → Custom fonts), it is already self-hosted via
+    @font-face (snippets/custom-fonts.liquid) — so we do NOT request Google Fonts (kills the wasted 404),
+    and optionally `preload` the local file for faster first paint.
+  - Otherwise it's treated as a Google Fonts family: we preconnect (when preloading) and load it with
+    `display=swap` so text is never invisible.
+
+  @param {string} name - font family name (Google name or a registered custom font name)
+  @param {boolean} [preload] - hint the browser to fetch early (use for above-the-fold / LCP text)
+{%- endcomment -%}
+{%- liquid
+  assign is_custom = false
+  assign custom_src = ''
+  if name != blank
+    assign name_norm = name | strip | downcase
+    for i in (1..6)
+      assign nk = 'customfont' | append: i | append: '_name'
+      assign cn = settings[nk]
+      if cn != blank
+        assign cn_norm = cn | strip | downcase
+        if cn_norm == name_norm
+          assign is_custom = true
+          assign sk = 'customfont' | append: i | append: '_src'
+          assign custom_src = settings[sk]
+          break
+        endif
+      endif
+    endfor
+  endif
+-%}
+{%- if name != blank -%}
+  {%- if is_custom -%}
+    {%- if preload and custom_src != blank -%}
+      {%- liquid
+        if custom_src contains '//'
+          assign furl = custom_src | strip
+        else
+          assign furl = custom_src | strip | asset_url
+        endif
+        assign ext = custom_src | strip | split: '?' | first | split: '.' | last | downcase
+        case ext
+          when 'woff'
+            assign mt = 'font/woff'
+          when 'ttf'
+            assign mt = 'font/ttf'
+          when 'otf'
+            assign mt = 'font/otf'
+          else
+            assign mt = 'font/woff2'
+        endcase
+      -%}
+      <link rel="preload" as="font" type="{{ mt }}" href="{{ furl }}" crossorigin>
+    {%- endif -%}
+  {%- else -%}
+    {%- assign gfam = name | strip | replace: ' ', '+' -%}
+    {%- assign ghref = 'https://fonts.googleapis.com/css2?family=' | append: gfam | append: ':ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap' -%}
+    {%- if preload -%}<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>{%- endif -%}
+    <link rel="stylesheet" href="{{ ghref }}">
+  {%- endif -%}
+{%- endif -%}

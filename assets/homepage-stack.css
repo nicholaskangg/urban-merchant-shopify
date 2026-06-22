@@ -1,0 +1,33 @@
+/* Homepage stacking-sections scroll effect:
+   each section sticks at top:0 and later sections (higher DOM order)
+   naturally paint on top, creating a "card slides over card" effect. */
+.main-content > .shopify-section:nth-child(2) {
+  position: -webkit-sticky;
+  position: sticky;
+  top: var(--header-height);
+}
+.main-content > .shopify-section:nth-child(3) {
+  position: -webkit-sticky;
+  position: sticky;
+  top: calc(var(--header-height) + 3em + var(--title-sm) * 1.25 + 1em);
+  box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.12);
+}
+.main-content > .shopify-section:nth-child(3) > div {
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+}
+.main-content > .shopify-section:nth-child(4) {
+  position: -webkit-sticky;
+  position: sticky;
+  top: calc(var(--header-height) + 4.5em + var(--title-sm) * 1.25 + 1em);
+  box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.12);
+}
+.main-content > .shopify-section:nth-child(4) > div  {
+  /* border-radius: 20px 20px 0 0; */
+  overflow: hidden;
+}
+@media screen and (max-width: 767px) {
+  .main-content > .shopify-section:nth-child(3) {
+    top: calc(var(--header-height) + 1.3em + var(--title-sm) * 1.25);
+  }
+}

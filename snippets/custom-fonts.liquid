@@ -1,0 +1,38 @@
+{%- comment -%}
+  Registers self-hosted custom fonts defined in Theme settings → Custom fonts.
+  Each slot: family name + source (an asset filename like "myfont.woff2" OR a full https URL) + weight + italic.
+  Once registered, the family name can be typed into any "Custom font" field in the theme.
+{%- endcomment -%}
+{%- capture custom_fonts_css -%}
+  {%- for i in (1..6) -%}
+    {%- assign name_key = 'customfont' | append: i | append: '_name' -%}
+    {%- assign src_key = 'customfont' | append: i | append: '_src' -%}
+    {%- assign weight_key = 'customfont' | append: i | append: '_weight' -%}
+    {%- assign italic_key = 'customfont' | append: i | append: '_italic' -%}
+    {%- assign fname = settings[name_key] -%}
+    {%- assign fsrc = settings[src_key] -%}
+    {%- if fname != blank and fsrc != blank -%}
+      {%- if fsrc contains '//' -%}
+        {%- assign furl = fsrc | strip -%}
+      {%- else -%}
+        {%- assign furl = fsrc | strip | asset_url -%}
+      {%- endif -%}
+      {%- assign ext = fsrc | strip | split: '?' | first | split: '.' | last | downcase -%}
+      {%- case ext -%}
+        {%- when 'woff' -%}{%- assign fmt = 'woff' -%}
+        {%- when 'ttf' -%}{%- assign fmt = 'truetype' -%}
+        {%- when 'otf' -%}{%- assign fmt = 'opentype' -%}
+        {%- else -%}{%- assign fmt = 'woff2' -%}
+      {%- endcase -%}
+      @font-face {
+        font-family: '{{ fname | strip }}';
+        src: url('{{ furl }}') format('{{ fmt }}');
+        font-weight: {{ settings[weight_key] | default: '400' }};
+        font-style: {% if settings[italic_key] %}italic{% else %}normal{% endif %};
+        font-display: swap;
+      }
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- assign custom_fonts_css = custom_fonts_css | strip -%}
+{%- if custom_fonts_css != blank -%}<style>{{ custom_fonts_css }}</style>{%- endif -%}

@@ -29,9 +29,107 @@
       }
     }
   {% endif -%}
+
+  /* Per-block heading/button positioning (3x3 grid over the slide) */
+  /* The nav must fill the slide height; the theme has no flex-1/min-h-0 utility. */
+  .slideshow-content:has(.slideshow-word--grid) { display: flex; flex-direction: column; height: 100%; }
+  .slideshow-words:has(.slideshow-word--grid) {
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    flex: 1 1 0;
+    min-height: 0;
+  }
+  .slideshow-word--grid {
+    grid-area: 1 / 1;
+    container-type: inline-size;   /* enables cqw width (% of the slide) */
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "top" "middle" "bottom";
+  }
+  /* Heading width = % of the slide via the --heading-w container-width var */
+  .slideshow-pos { display: flex; flex-direction: column; gap: var(--sp-6); max-width: var(--heading-w, 100cqw); }
+  .slideshow-pos .banner__box { min-width: 0 !important; max-width: none !important; width: 100%; }
+  /* Body text passage under the heading */
+  .slideshow-text { font-size: var(--text-fs, 1rem); line-height: 1.5; opacity: 0.95; }
+  .slideshow-pos .slideshow-text,
+  .slideshow-pos .slideshow-text :is(p, span, a, em, strong, li, div) {
+    font-family: var(--block-text-font, var(--font-body-family)) !important;
+  }
+  /* Gradient backdrop behind the heading/text group (for contrast) */
+  .slideshow-pos--backdrop { position: relative; isolation: isolate; }
+  .slideshow-pos--backdrop::before {
+    content: '';
+    position: absolute;
+    inset: -2rem -3rem;
+    z-index: -1;
+    background: radial-gradient(ellipse at center, rgb(var(--backdrop-color, 0 0 0) / 0.6), rgb(var(--backdrop-color, 0 0 0) / 0) 75%);
+    pointer-events: none;
+  }
+  .slideshow-text * { font-family: inherit; }
+  .slideshow-text > * { margin: 0; }
+  .slideshow-text > * + * { margin-top: var(--sp-3); }
+  /* Per-block heading font (override any theme/split-words font) */
+  .slideshow-pos .heading,
+  .slideshow-pos .heading .word,
+  .slideshow-pos .heading animate-element {
+    font-family: var(--block-heading-font, var(--font-heading-family)) !important;
+  }
+  .slideshow-heading--custom-fs { font-size: var(--heading-fs) !important; line-height: 1.05 !important; }
+  .slideshow-pos--top-left, .slideshow-pos--middle-left, .slideshow-pos--bottom-left { align-items: flex-start; text-align: left; }
+  .slideshow-pos--top-center, .slideshow-pos--middle-center, .slideshow-pos--bottom-center { align-items: center; text-align: center; }
+  .slideshow-pos--top-right, .slideshow-pos--middle-right, .slideshow-pos--bottom-right { align-items: flex-end; text-align: right; }
+  .slideshow-pos--top-left { grid-area: top; align-self: start; justify-self: start; }
+  .slideshow-pos--top-center { grid-area: top; align-self: start; justify-self: center; }
+  .slideshow-pos--top-right { grid-area: top; align-self: start; justify-self: end; }
+  .slideshow-pos--middle-left { grid-area: middle; align-self: center; justify-self: start; }
+  .slideshow-pos--middle-center { grid-area: middle; align-self: center; justify-self: center; }
+  .slideshow-pos--middle-right { grid-area: middle; align-self: center; justify-self: end; }
+  .slideshow-pos--bottom-left { grid-area: bottom; align-self: end; justify-self: start; }
+  .slideshow-pos--bottom-center { grid-area: bottom; align-self: end; justify-self: center; }
+  .slideshow-pos--bottom-right { grid-area: bottom; align-self: end; justify-self: end; }
+
+  /* Mobile: drop the 3x3 grid and stack the groups full-width in a single column,
+     anchored to the heading's vertical zone. The grid props (grid-area / *-self)
+     must be reset, or flexbox re-uses align-self and mis-aligns everything. */
+  @media screen and (max-width: 767px) {
+    .slideshow-word--grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+      height: 100%;
+    }
+    .slideshow-word--v-top { justify-content: flex-start; }
+    .slideshow-word--v-middle { justify-content: center; }
+    .slideshow-word--v-bottom { justify-content: flex-end; }
+    .slideshow-word--grid .slideshow-pos {
+      grid-area: auto !important;
+      align-self: stretch !important;
+      justify-self: auto !important;
+      width: 100%;
+      max-width: 100% !important;
+    }
+    .slideshow-heading--custom-fs { font-size: var(--heading-fs-mobile, var(--heading-fs)) !important; }
+  }
 </style>
 
 {%- if section.blocks.size > 0 -%}
+{%- liquid
+  assign heading_fonts = ''
+  for block in section.blocks
+    assign hf = block.settings.heading_font | strip
+    if hf != blank
+      unless heading_fonts contains hf
+        assign heading_fonts = heading_fonts | append: hf | append: '|'
+      endunless
+    endif
+  endfor
+-%}
+{%- if heading_fonts != blank -%}
+  {%- assign hf_list = heading_fonts | split: '|' -%}
+  {%- for hf in hf_list -%}{%- render 'font-loader', name: hf -%}{%- endfor -%}
+{%- endif -%}
 <div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}">
   <div class="{% unless section.settings.full_width %}page-width {% endunless %}relative">
     {%- if section.blocks.size > 1 and section.settings.autoplay and section.settings.show_slide_info != true -%}
@@ -236,29 +334,47 @@
         {%- endcase -%}
       {%- endfor -%}
     </slideshow-element>
-    <div class="page-width absolute bottom-0 left-0 w-full pointer-events-none">
-      <div class="slideshow-content">
-        <nav is="slideshow-words" class="slideshow-words grid items-center" aria-controls="Slider-{{ section.id }}" aria-labelledby="Slider-{{ section.id }}">
+    <div class="page-width absolute top-0 bottom-0 left-0 w-full pointer-events-none">
+      <div class="slideshow-content flex flex-col h-full">
+        <nav is="slideshow-words" class="slideshow-words grid flex-1 min-h-0" aria-controls="Slider-{{ section.id }}" aria-labelledby="Slider-{{ section.id }}">
           {%- for block in section.blocks -%}
-            <div class="slideshow-word flex flex-col md:flex-row md:items-end justify-between gap-6" data-index="{{ forloop.index0 }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}">
-              {%- if block.settings.heading != blank -%}
-                <div class="banner__box banner__box--{{ section.settings.content_width }}">
-                  <{{ block.settings.heading_tag }} class="heading leading-none {{ block.settings.heading_size }}">
-                    <split-words class="split-words js-invisible block" data-animate="fade-up-large" data-animate-delay="250">{{ block.settings.heading }}</split-words>
-                  </{{ block.settings.heading_tag }}>
-                </div>
-              {%- endif -%}
-
-              {%- if block.settings.button_label != blank -%}
-                {%- render 'button',
-                  label: block.settings.button_label,
-                  link: block.settings.button_link,
-                  style: block.settings.button_style,
-                  external: block.settings.button_external,
-                  show_icon: block.settings.button_icon,
-                  classes: 'button--blur button--fixed pointer-events-auto',
-                  shopify_attributes: block.shopify_attributes
-                -%}
+            {%- liquid
+              assign hpos = block.settings.heading_position | default: 'bottom-left'
+              assign bpos = block.settings.button_position | default: 'bottom-right'
+              assign hvert = hpos | split: '-' | first
+              assign hwidth = block.settings.heading_width | default: 45
+              assign heading_font = block.settings.heading_font
+              assign heading_fs = block.settings.heading_font_size | default: 0
+              assign text_font = block.settings.text_font
+              assign backdrop = block.settings.text_backdrop
+              assign has_heading = false
+              if block.settings.heading != blank
+                assign has_heading = true
+              endif
+              assign has_text = false
+              if block.settings.text != blank
+                assign has_text = true
+              endif
+              assign has_heading_group = false
+              if has_heading or has_text
+                assign has_heading_group = true
+              endif
+              assign has_button = false
+              if block.settings.button_label != blank
+                assign has_button = true
+              endif
+            -%}
+            {%- capture heading_html -%}{%- if has_heading -%}<div class="banner__box banner__box--{{ section.settings.content_width }}"><{{ block.settings.heading_tag }} class="heading leading-none {{ block.settings.heading_size }}{% if heading_fs > 0 %} slideshow-heading--custom-fs{% endif %}" style="{% if heading_font != blank %}--block-heading-font:'{{ heading_font | strip }}',sans-serif;{% endif %}{% if heading_fs > 0 %}--heading-fs:{{ heading_fs }}px;--heading-fs-mobile:{{ heading_fs | times: 0.62 | round }}px;{% endif %}"><split-words class="split-words js-invisible block" data-animate="fade-up-large" data-animate-delay="250">{{ block.settings.heading }}</split-words></{{ block.settings.heading_tag }}></div>{%- endif -%}{%- endcapture -%}
+            {%- capture text_html -%}{%- if has_text -%}{%- if text_font != blank -%}<style>{{ text_font | font_face: font_display: 'swap' }}</style>{%- endif -%}<div class="slideshow-text rte"{% if text_font != blank %} style="--block-text-font:{{ text_font.family }},{{ text_font.fallback_families }}"{% endif %} data-animate="fade-up-large" data-animate-delay="350">{{ block.settings.text }}</div>{%- endif -%}{%- endcapture -%}
+            {%- capture button_color_style -%}{%- if block.settings.color_button_text != blank and block.settings.color_button_text != 'rgba(0,0,0,0)' -%}--color-button-text:{{ block.settings.color_button_text.rgb }};{%- endif -%}{%- if block.settings.color_button_background != blank and block.settings.color_button_background != 'rgba(0,0,0,0)' -%}--color-button-background:{{ block.settings.color_button_background.rgb }};--color-button-border:{{ block.settings.color_button_background.rgb }};{%- endif -%}{%- if block.settings.color_button_gradient != blank and block.settings.color_button_gradient != 'rgba(0,0,0,0)' -%}--color-button-gradient:{{ block.settings.color_button_gradient }};{%- endif -%}{%- endcapture -%}
+            {%- capture button_html -%}{%- if has_button -%}{%- render 'button', label: block.settings.button_label, link: block.settings.button_link, style: block.settings.button_style, external: block.settings.button_external, show_icon: block.settings.button_icon, classes: 'button--blur button--fixed pointer-events-auto', size_style: button_color_style, shopify_attributes: block.shopify_attributes -%}{%- endif -%}{%- endcapture -%}
+            {%- capture hg_open -%}<div class="slideshow-pos slideshow-pos--{{ hpos }}{% if backdrop %} slideshow-pos--backdrop{% endif %}" style="--heading-w: {{ hwidth }}cqw;{% if backdrop %}--backdrop-color:{{ block.settings.text_backdrop_color.rgb }};{% endif %}">{%- endcapture -%}
+            <div class="slideshow-word slideshow-word--grid slideshow-word--v-{{ hvert }}" data-index="{{ forloop.index0 }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}">
+              {%- if has_heading_group and has_button and hpos == bpos -%}
+                {{ hg_open }}{{ heading_html }}{{ text_html }}{{ button_html }}</div>
+              {%- else -%}
+                {%- if has_heading_group -%}{{ hg_open }}{{ heading_html }}{{ text_html }}</div>{%- endif -%}
+                {%- if has_button -%}<div class="slideshow-pos slideshow-pos--{{ bpos }}">{{ button_html }}</div>{%- endif -%}
               {%- endif -%}
             </div>
           {%- endfor -%}
@@ -721,6 +837,33 @@
           "default": "Image slide"
         },
         {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "info": "Optional description shown below the heading — e.g. details about the product on this slide."
+        },
+        {
+          "visible_if": "{{ block.settings.text != blank }}",
+          "type": "font_picker",
+          "id": "text_font",
+          "label": "Text font",
+          "default": "assistant_n4"
+        },
+        {
+          "type": "checkbox",
+          "id": "text_backdrop",
+          "label": "Gradient behind text",
+          "info": "Soft gradient behind the heading/text so it stands out on busy images.",
+          "default": false
+        },
+        {
+          "visible_if": "{{ block.settings.text_backdrop }}",
+          "type": "color",
+          "id": "text_backdrop_color",
+          "label": "Gradient color",
+          "default": "#000000"
+        },
+        {
           "type": "select",
           "id": "heading_size",
           "options": [
@@ -834,6 +977,96 @@
           "id": "button_icon",
           "label": "t:sections.global.settings.button_icon.label",
           "default": false
+        },
+        {
+          "visible_if": "{{ block.settings.button_label != blank }}",
+          "type": "color",
+          "id": "color_button_text",
+          "label": "t:sections.global.settings.color_button_text.label",
+          "info": "Overrides the section button color for this slide."
+        },
+        {
+          "visible_if": "{{ block.settings.button_label != blank }}",
+          "type": "color",
+          "id": "color_button_background",
+          "label": "t:sections.global.settings.color_button_background.label"
+        },
+        {
+          "visible_if": "{{ block.settings.button_label != blank }}",
+          "type": "color_background",
+          "id": "color_button_gradient",
+          "label": "t:sections.global.settings.color_button_gradient.label"
+        },
+        {
+          "type": "header",
+          "content": "Heading & button position"
+        },
+        {
+          "visible_if": "{{ block.settings.heading != blank }}",
+          "type": "text",
+          "id": "heading_font",
+          "label": "Heading font (Google Font)",
+          "info": "Type a Google Fonts family name, e.g. EB Garamond. Leave blank for the theme font."
+        },
+        {
+          "visible_if": "{{ block.settings.heading != blank }}",
+          "type": "range",
+          "id": "heading_font_size",
+          "min": 0,
+          "max": 140,
+          "step": 2,
+          "unit": "px",
+          "label": "Heading font size",
+          "info": "0 = use the Heading size preset above.",
+          "default": 0
+        },
+        {
+          "visible_if": "{{ block.settings.heading != blank }}",
+          "type": "range",
+          "id": "heading_width",
+          "min": 20,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Heading width",
+          "info": "Width of the heading and text as a percentage of the slide. 100% = full slide width.",
+          "default": 45
+        },
+        {
+          "type": "select",
+          "id": "heading_position",
+          "label": "Heading position",
+          "default": "bottom-left",
+          "options": [
+            { "value": "top-left", "label": "Top left" },
+            { "value": "top-center", "label": "Top center" },
+            { "value": "top-right", "label": "Top right" },
+            { "value": "middle-left", "label": "Middle left" },
+            { "value": "middle-center", "label": "Middle center" },
+            { "value": "middle-right", "label": "Middle right" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "bottom-center", "label": "Bottom center" },
+            { "value": "bottom-right", "label": "Bottom right" }
+          ]
+        },
+        {
+          "visible_if": "{{ block.settings.button_label != blank }}",
+          "type": "select",
+          "id": "button_position",
+          "label": "Button position",
+          "info": "If the button shares the heading's position, it stacks below the heading.",
+          "default": "bottom-right",
+          "options": [
+            { "value": "top-left", "label": "Top left" },
+            { "value": "top-center", "label": "Top center" },
+            { "value": "top-right", "label": "Top right" },
+            { "value": "middle-left", "label": "Middle left" },
+            { "value": "middle-center", "label": "Middle center" },
+            { "value": "middle-right", "label": "Middle right" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "bottom-center", "label": "Bottom center" },
+            { "value": "bottom-right", "label": "Bottom right" }
+          ]
         }
       ]
     },
@@ -1021,6 +1254,96 @@
           "id": "button_icon",
           "label": "t:sections.global.settings.button_icon.label",
           "default": false
+        },
+        {
+          "visible_if": "{{ block.settings.button_label != blank }}",
+          "type": "color",
+          "id": "color_button_text",
+          "label": "t:sections.global.settings.color_button_text.label",
+          "info": "Overrides the section button color for this slide."
+        },
+        {
+          "visible_if": "{{ block.settings.button_label != blank }}",
+          "type": "color",
+          "id": "color_button_background",
+          "label": "t:sections.global.settings.color_button_background.label"
+        },
+        {
+          "visible_if": "{{ block.settings.button_label != blank }}",
+          "type": "color_background",
+          "id": "color_button_gradient",
+          "label": "t:sections.global.settings.color_button_gradient.label"
+        },
+        {
+          "type": "header",
+          "content": "Heading & button position"
+        },
+        {
+          "visible_if": "{{ block.settings.heading != blank }}",
+          "type": "text",
+          "id": "heading_font",
+          "label": "Heading font (Google Font)",
+          "info": "Type a Google Fonts family name, e.g. EB Garamond. Leave blank for the theme font."
+        },
+        {
+          "visible_if": "{{ block.settings.heading != blank }}",
+          "type": "range",
+          "id": "heading_font_size",
+          "min": 0,
+          "max": 140,
+          "step": 2,
+          "unit": "px",
+          "label": "Heading font size",
+          "info": "0 = use the Heading size preset above.",
+          "default": 0
+        },
+        {
+          "visible_if": "{{ block.settings.heading != blank }}",
+          "type": "range",
+          "id": "heading_width",
+          "min": 20,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Heading width",
+          "info": "Width of the heading and text as a percentage of the slide. 100% = full slide width.",
+          "default": 45
+        },
+        {
+          "type": "select",
+          "id": "heading_position",
+          "label": "Heading position",
+          "default": "bottom-left",
+          "options": [
+            { "value": "top-left", "label": "Top left" },
+            { "value": "top-center", "label": "Top center" },
+            { "value": "top-right", "label": "Top right" },
+            { "value": "middle-left", "label": "Middle left" },
+            { "value": "middle-center", "label": "Middle center" },
+            { "value": "middle-right", "label": "Middle right" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "bottom-center", "label": "Bottom center" },
+            { "value": "bottom-right", "label": "Bottom right" }
+          ]
+        },
+        {
+          "visible_if": "{{ block.settings.button_label != blank }}",
+          "type": "select",
+          "id": "button_position",
+          "label": "Button position",
+          "info": "If the button shares the heading's position, it stacks below the heading.",
+          "default": "bottom-right",
+          "options": [
+            { "value": "top-left", "label": "Top left" },
+            { "value": "top-center", "label": "Top center" },
+            { "value": "top-right", "label": "Top right" },
+            { "value": "middle-left", "label": "Middle left" },
+            { "value": "middle-center", "label": "Middle center" },
+            { "value": "middle-right", "label": "Middle right" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "bottom-center", "label": "Bottom center" },
+            { "value": "bottom-right", "label": "Bottom right" }
+          ]
         }
       ]
     }
