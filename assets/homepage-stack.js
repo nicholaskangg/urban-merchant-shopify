@@ -45,8 +45,12 @@
 
       // Measure first (rects reflect the PREVIOUS frame's transform).
       var rects = [];
+      var stickyTops = [];
       for (var k = 0; k < cards.length; k++) {
         rects.push(cards[k].getBoundingClientRect());
+        // Resolved sticky `top` in px (calc → px). Re-read each frame so it
+        // stays correct after --header-height / font-size changes.
+        stickyTops.push(parseFloat(getComputedStyle(cards[k]).top) || 0);
       }
       var pusherTop = pusher.getBoundingClientRect().top;
 
@@ -60,6 +64,18 @@
         cards[i].style.transform = translate
           ? 'translateY(' + (-translate) + 'px)'
           : '';
+
+        // Stuck once the card has reached (or passed) its sticky top. The
+        // translate above only shifts it further up, so this stays true on exit.
+        var stuck = rects[i].top <= stickyTops[i] + 1;
+        cards[i].classList.toggle('is-stuck', stuck);
+
+        var isCovered = false;
+        if (cards[i + 1]) {
+          isCovered = rects[i + 1].top <= stickyTops[i + 1] + 1;
+        }
+        cards[i].classList.toggle('is-covered', isCovered);
+
       }
 
       // --- Depth: scale each covered card's inner content down a touch ------

@@ -1,8 +1,5 @@
 <style>
   #shopify-section-{{ section.id }} {
-    .product__gallery {
-      margin-top: 24px;
-    }
     --section-padding-top: {{ section.settings.padding_top }}px;
     --section-padding-bottom: {{ section.settings.padding_bottom }}px;
   }
@@ -27,6 +24,8 @@
     }
   }
 </style>
+
+{{ 'featured-product.css' | asset_url | stylesheet_tag }}
 
 {%- liquid
   assign product = section.settings.product

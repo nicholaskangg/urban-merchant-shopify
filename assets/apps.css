@@ -1,5 +1,11 @@
 /*! Shopify Cookie banner */
 
+/* @media screen and (max-width: 767px) {
+  html,
+  body { overflow-x: hidden; }
+}
+     */
+
 #shopify-pc__banner[style*="display: block"] {
   animation: fade-in .6s cubic-bezier(.7, 0, .2, 1);
   display: block !important;

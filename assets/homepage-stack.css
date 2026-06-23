@@ -1,53 +1,88 @@
-/* Homepage stacking-sections scroll effect.
-   homepage-stack.js wraps four homepage sections in .stacking-container:
-     [ s1  s2  s3  s4 ]
-   s1–s3 peek-stack via the sticky rules below. s4 is the non-sticky "pusher"
-   that drives the whole stack up and off together (the leave-together exit is
-   handled in JS) and also provides s3 its sticky runway. */
+
+html, body {
+  overflow-x: clip !important;
+  max-width: 100vw;
+}
 
 .stacking-container {
   position: relative;
   display: block;
+  width: 100%;
 }
 
-/* Card 1 (was .main-content > .shopify-section:nth-child(2)) */
+.stacking-container > .shopify-section {
+  width: 100vw;
+  max-width: 100%;
+  overflow-x: clip;
+  box-sizing: border-box;
+}
+
+.stacking-container > .shopify-section > div {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.stacking-container > .shopify-section:nth-child(-n + 3) > div {
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+  overflow: hidden;
+  border-top: 2px solid transparent;
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+
+  transition: border-color 0.3s ease;
+  transition: background-color 0.3s ease;
+  /* background-color: transparent; */
+}
+
+.stacking-container > .shopify-section:nth-child(-n + 3) > div::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  background-color: transparent;
+  transition: background-color 0.4s ease;
+}
+
+.stacking-container > .shopify-section.is-stuck > div {
+  border-color: #333333;
+}
+
+.stacking-container > .shopify-section.is-covered > div::after {
+  background-color: rgba(0, 0, 0, 0.2); /* Change color/opacity here */
+}
+
 .stacking-container > .shopify-section:nth-child(1) {
   position: -webkit-sticky;
   position: sticky;
   top: var(--header-height);
 }
 
-/* Card 2 (was nth-child(3)) */
 .stacking-container > .shopify-section:nth-child(2) {
   position: -webkit-sticky;
   position: sticky;
-  top: calc(var(--header-height) + 2em + var(--title-sm) * 1.25 + 1em);
-  /* box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.12); */
-}
-.stacking-container > .shopify-section:nth-child(2) > div {
-  /* border-radius: 20px 20px 0 0; */
-  overflow: hidden;
+  top: calc(var(--header-height) + 1.8em + var(--title-sm) * 1.25 + 1em);
 }
 
-/* Card 3 (was nth-child(4)) — sits below TWO headings (Categories + Gifts),
-   so it needs the heading-height term (title-sm * 1.25) twice, not once. */
 .stacking-container > .shopify-section:nth-child(3) {
   position: -webkit-sticky;
   position: sticky;
-  top: calc(var(--header-height) + 4em + var(--title-sm) * 1.25 * 2 + 1em);
-  /* box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.12); */
-}
-.stacking-container > .shopify-section:nth-child(3) > div {
-  /* border-radius: 20px 20px 0 0; */
-  overflow: hidden;
+  top: calc(var(--header-height) + 4.2em + var(--title-sm) * 1.25 * 2 + 1em);
 }
 
+
+
 @media screen and (max-width: 767px) {
+  
   .stacking-container > .shopify-section:nth-child(2) {
-    top: calc(var(--header-height) + 1.3em + var(--title-sm) * 1.25);
+    top: calc(var(--header-height) + 2em + var(--title-sm) * 1.25);
   }
   .stacking-container > .shopify-section:nth-child(3) {
-    /* Two headings above it on mobile too, so double the heading-height term. */
-    top: calc(var(--header-height) + 2.6em + var(--title-sm) * 1.25 * 2);
+    top: calc(var(--header-height) + 4em + var(--title-sm) * 1.25 * 2);
   }
 }
