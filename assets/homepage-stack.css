@@ -60,7 +60,7 @@ html, body {
 .stacking-container > .shopify-section:nth-child(1) {
   position: -webkit-sticky;
   position: sticky;
-  top: var(--header-height);
+  top: calc(var(--header-height));
 }
 
 .stacking-container > .shopify-section:nth-child(2) {
@@ -72,9 +72,18 @@ html, body {
 .stacking-container > .shopify-section:nth-child(3) {
   position: -webkit-sticky;
   position: sticky;
-  top: calc(var(--header-height) + 4.2em + var(--title-sm) * 1.25 * 2 + 1em);
+  top: calc(var(--header-height) + 4.22em + var(--title-sm) * 1.25 * 2 + 1em);
+  z-index: 6;
 }
 
+/* .stacking-container > .shopify-section:nth-child(4) {
+  top: -10px;
+} */
+
+.stacking-container > .shopify-section:nth-child(4) .section--rounded {
+  border-start-end-radius: 0;
+  border-start-start-radius: 0;
+}
 
 
 @media screen and (max-width: 767px) {
@@ -84,5 +93,55 @@ html, body {
   }
   .stacking-container > .shopify-section:nth-child(3) {
     top: calc(var(--header-height) + 4em + var(--title-sm) * 1.25 * 2);
+  }
+  .stacking-container > .shopify-section:nth-child(4) .section--rounded {
+    border-start-end-radius: 0;
+    border-start-start-radius: 0;
+  }
+}
+
+/* Desktop/tablet only (not mobile, which is max-width: 767px). */
+@media screen and (min-width: 768px) {
+  /* Original Shopify nth-child(5), now inside wrapper as child 4 */
+  .stacking-container > .shopify-section:nth-child(4) {
+    position: relative;
+    overflow: visible;
+    transform: none !important;
+  }
+
+  /* Keep parent of inner sticky clean */
+  .stacking-container > .shopify-section:nth-child(4) > div {
+    overflow: visible;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  /* Product gallery sticky/centered */
+  .stacking-container
+    > .shopify-section:nth-child(4)
+    .product__media-container,
+    .stacking-container
+    > .shopify-section:nth-child(4) .product__spinning {
+    margin-top: 90px;
+  }
+
+  .stacking-container
+    > .shopify-section:nth-child(4) .product__spinning {
+      top: 85px;
+      right: -100px;
+  }
+
+  /* Make the gallery content fit inside the available height */
+  .stacking-container
+    > .shopify-section:nth-child(4)
+    .product__gallery-container img,
+  .stacking-container
+    > .shopify-section:nth-child(4)
+    .product__gallery-container video,
+  .stacking-container
+    > .shopify-section:nth-child(4)
+    .product__gallery-container model-viewer {
+    max-height: 100%;
+    object-fit: contain;
   }
 }
