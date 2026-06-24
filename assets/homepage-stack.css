@@ -36,7 +36,13 @@ html, body {
   /* background-color: transparent; */
 }
 
-.stacking-container > .shopify-section:nth-child(-n + 3) > div::after {
+.stacking-container > .border-active {
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+
+}
+
+.stacking-container > .shopify-section:nth-child(-n + 4) > div::after {
   content: "";
   position: absolute;
   top: 0;
