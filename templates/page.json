@@ -15,9 +15,9 @@
         "heading_size": "title-md",
         "heading_alignment": "text-center",
         "heading_tag": "h1",
-        "text_size": "text-base",
-        "padding_top": 72,
-        "padding_bottom": 28,
+        "text_size": "text-lg md:text-2xl",
+        "padding_top": 36,
+        "padding_bottom": 8,
         "divider": false,
         "narrow": true,
         "rounded": false

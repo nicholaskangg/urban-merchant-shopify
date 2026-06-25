@@ -327,7 +327,7 @@
         "color_button_background": "",
         "color_button_gradient": "",
         "padding_top": 24,
-        "padding_bottom": 24,
+        "padding_bottom": 48,
         "divider": false,
         "full_width": false,
         "rounded": true
@@ -791,6 +791,19 @@
             "text_size": "text-base"
           }
         },
+        "collapsible_tab_cqjneU": {
+          "type": "collapsible_tab",
+          "settings": {
+            "opened": false,
+            "style": "with-border",
+            "icon": "none",
+            "heading": "Collapsible row",
+            "content": "<p></p><p></p>",
+            "page": "",
+            "liquid": "",
+            "text_size": "text-sm"
+          }
+        },
         "countdown": {
           "type": "countdown",
           "settings": {
@@ -902,6 +915,7 @@
         "vendor",
         "title",
         "description",
+        "collapsible_tab_cqjneU",
         "countdown",
         "variant_picker",
         "inventory",
@@ -1323,6 +1337,80 @@
         "rounded": true
       }
     },
+    "shop-the-look": {
+      "type": "shop-the-look",
+      "blocks": {
+        "product-1": {
+          "type": "product",
+          "settings": {
+            "product": "",
+            "color_text": "#ffffff",
+            "vertical": 35,
+            "horizontal": 15,
+            "vertical_mobile": 25,
+            "horizontal_mobile": 25
+          }
+        },
+        "product-2": {
+          "type": "product",
+          "settings": {
+            "product": "",
+            "color_text": "#ffffff",
+            "vertical": 65,
+            "horizontal": 38,
+            "vertical_mobile": 75,
+            "horizontal_mobile": 65
+          }
+        },
+        "product-3": {
+          "type": "product",
+          "settings": {
+            "product": "",
+            "color_text": "#ffffff",
+            "vertical": 50,
+            "horizontal": 62,
+            "vertical_mobile": 50,
+            "horizontal_mobile": 50
+          }
+        }
+      },
+      "block_order": [
+        "product-1",
+        "product-2",
+        "product-3"
+      ],
+      "name": "Premium Woodworking",
+      "settings": {
+        "heading": "Premium Woodworking",
+        "heading_size": "title-sm",
+        "heading_alignment": "text-center md:items-center",
+        "heading_tag": "h2",
+        "subheading": "Limited in Quantity",
+        "description": "",
+        "button_label": "",
+        "button_link": "",
+        "button_external": false,
+        "button_icon": true,
+        "highlighted_text": "scribble",
+        "highlighted_scribble": "squiggle-underline",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "color_overlay": "#171717",
+        "overlay_opacity": 30,
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "divider": false,
+        "full_width": false,
+        "rounded": true
+      }
+    },
     "countdown-timer": {
       "type": "countdown-timer",
       "blocks": {
@@ -1408,77 +1496,245 @@
         "parallax_direction": "vertical"
       }
     },
-    "shop-the-look": {
-      "type": "shop-the-look",
+    "image_with_text_overlay_6dVkWN": {
+      "type": "image-with-text-overlay",
       "blocks": {
-        "product-1": {
-          "type": "product",
+        "subheading_e4ThXG": {
+          "type": "subheading",
+          "disabled": true,
           "settings": {
-            "product": "",
-            "color_text": "#ffffff",
-            "vertical": 35,
-            "horizontal": 15,
-            "vertical_mobile": 25,
-            "horizontal_mobile": 25
+            "subheading": "Add a tagline",
+            "subheading_size": "subtitle-md",
+            "secondary_color": true
           }
         },
-        "product-2": {
-          "type": "product",
+        "heading_aBK8C4": {
+          "type": "heading",
           "settings": {
-            "product": "",
-            "color_text": "#ffffff",
-            "vertical": 65,
-            "horizontal": 38,
-            "vertical_mobile": 75,
-            "horizontal_mobile": 65
+            "heading": "<strong>Browse Our Store In Person</strong>",
+            "heading_size": "title-lg tracking-heading",
+            "heading_tag": "h2",
+            "highlighted_text": "stencil",
+            "highlighted_scribble": "circle",
+            "highlighted_reveal": false
           }
         },
-        "product-3": {
-          "type": "product",
+        "button_6nVwj6": {
+          "type": "button",
           "settings": {
-            "product": "",
-            "color_text": "#ffffff",
-            "vertical": 50,
-            "horizontal": 62,
-            "vertical_mobile": 50,
-            "horizontal_mobile": 50
+            "button_label": "Find an Outlet",
+            "button_link": "shopify://pages/outlets",
+            "button_style": "primary",
+            "button_size": "md",
+            "button_external": false,
+            "button_icon": true
+          }
+        },
+        "text_K8Dd4J": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "text_font": "body",
+            "text_size": "subtext-md",
+            "text_max_size": 32,
+            "text_line_height": 1.6,
+            "text_letter_spacing": 0,
+            "text_capitalize": false,
+            "secondary_color": false,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
           }
         }
       },
       "block_order": [
-        "product-1",
-        "product-2",
-        "product-3"
+        "subheading_e4ThXG",
+        "heading_aBK8C4",
+        "button_6nVwj6",
+        "text_K8Dd4J"
       ],
+      "name": "t:sections.image-with-text-overlay.name",
       "settings": {
-        "heading": "Bring Quality Sound into <em>Your Home</em>",
-        "heading_size": "title-sm",
-        "heading_alignment": "text-center md:items-center",
-        "heading_tag": "h2",
-        "subheading": "Premium Speakers",
-        "description": "",
-        "button_label": "",
-        "button_link": "",
-        "button_external": false,
-        "button_icon": true,
-        "highlighted_text": "scribble",
-        "highlighted_scribble": "squiggle-underline",
-        "highlighted_reveal": false,
+        "transparent_header": false,
+        "image": "shopify://shop_images/outlet.webp",
+        "image_height": "650px",
+        "content_width": "small",
+        "content_position": "md:items-end md:justify-start",
+        "text_alignment": "left",
+        "image_height_mobile": "auto",
+        "content_position_mobile": "items-end justify-start",
+        "text_alignment_mobile": "left",
+        "color_text": "#ffffff",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "#e0a580",
+        "gradient_highlight": "",
+        "color_button_text": "#ffffff",
+        "color_button_background": "#080808",
+        "color_button_gradient": "",
+        "color_overlay": "#171717",
+        "overlay_opacity": 19,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "divider": false,
+        "full_width": true,
+        "rounded": false,
+        "enable_parallax": true,
+        "parallax_direction": "vertical"
+      }
+    },
+    "scrolling-text-1": {
+      "type": "scrolling-text",
+      "blocks": {
+        "text_9yQVwD": {
+          "type": "text",
+          "settings": {
+            "text": "Welcome to Urban Merchant",
+            "text_size": 56,
+            "text_font": "heading",
+            "highlighted_text": "stencil",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "image_eK6Ty9": {
+          "type": "image",
+          "name": "TCS Logo",
+          "settings": {
+            "image": "shopify://shop_images/TCS-LOGO.avif",
+            "outlet": "",
+            "cafe_name": "The Coastal Settlement",
+            "cafe_address": "200 Netheravon Rd, Singapore 508529",
+            "caption_font": "Dancing Script",
+            "address_font": "",
+            "caption_size": 22,
+            "address_size": 14,
+            "caption_width": 240,
+            "height": 80,
+            "link": "https://urban-merchant.com/collections/the-coastal-settlement",
+            "accessibility_info": "",
+            "external": false
+          }
+        },
+        "image_nb9iET": {
+          "type": "image",
+          "name": "Coolies Union Logo",
+          "settings": {
+            "image": "shopify://shop_images/Primary_Logo_black.avif",
+            "outlet": "",
+            "cafe_name": "Coolies' Union",
+            "cafe_address": "9 Duxton Hl, Singapore 089593",
+            "caption_font": "Dancing Script",
+            "address_font": "",
+            "caption_size": 22,
+            "address_size": 14,
+            "caption_width": 0,
+            "height": 96,
+            "link": "",
+            "accessibility_info": "",
+            "external": false
+          }
+        },
+        "text_TDkL8X": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "Welcome to Urban Merchant",
+            "text_size": 56,
+            "text_font": "heading",
+            "highlighted_text": "stencil",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "image_jnj3f9": {
+          "type": "image",
+          "name": "Jiu Zhuang Logo",
+          "settings": {
+            "image": "shopify://shop_images/JZ-logo.webp",
+            "outlet": "",
+            "cafe_name": "Jiu Zhuang",
+            "cafe_address": "6D Dempsey Rd, Singapore 247664",
+            "caption_font": "Dancing Script",
+            "address_font": "",
+            "caption_size": 22,
+            "address_size": 14,
+            "caption_width": 240,
+            "height": 80,
+            "link": "",
+            "accessibility_info": "",
+            "external": false
+          }
+        },
+        "image_NRyHYq": {
+          "type": "image",
+          "name": "Vietnam Harvest Logo",
+          "settings": {
+            "image": "shopify://shop_images/VN-harvest-logo-black.png",
+            "outlet": "",
+            "cafe_name": "Vietnam Harvest",
+            "cafe_address": "246-248, Bùi Viện, Bến Thành, Hồ Chí Minh 70000, Vietnam",
+            "caption_font": "Dancing Script",
+            "address_font": "",
+            "caption_size": 22,
+            "address_size": 14,
+            "caption_width": 240,
+            "height": 68,
+            "link": "",
+            "accessibility_info": "",
+            "external": false
+          }
+        },
+        "text-1": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<em><strong>Play anything</strong></em>",
+            "text_size": 48,
+            "text_font": "body",
+            "highlighted_text": "stencil",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "text-2": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<em><strong>Day-long comfort</strong></em>",
+            "text_size": 24,
+            "text_font": "body",
+            "highlighted_text": "stencil",
+            "highlighted_scribble": "circle"
+          }
+        }
+      },
+      "block_order": [
+        "text_9yQVwD",
+        "image_eK6Ty9",
+        "image_nb9iET",
+        "text_TDkL8X",
+        "image_jnj3f9",
+        "image_NRyHYq",
+        "text-1",
+        "text-2"
+      ],
+      "name": "Outet Location - Scrolling Text",
+      "settings": {
+        "direction": "left",
+        "speed": 20,
+        "grid_horizontal": 70,
+        "enable_twin": false,
+        "enable_parallax": false,
+        "enable_swipe_mobile": false,
+        "fade_edges": true,
+        "fade_width": 2,
         "color_text": "",
         "color_background": "",
         "gradient_background": "",
         "color_highlight": "",
         "gradient_highlight": "",
-        "color_button_text": "",
-        "color_button_background": "",
-        "color_button_gradient": "",
-        "color_overlay": "#171717",
-        "overlay_opacity": 30,
-        "padding_top": 100,
-        "padding_bottom": 100,
+        "padding_top": 24,
+        "padding_bottom": 24,
         "divider": false,
-        "full_width": false,
-        "rounded": true
+        "rounded": false
       }
     },
     "testimonials-banner": {
@@ -1684,6 +1940,7 @@
         "image-6",
         "image-7"
       ],
+      "disabled": true,
       "settings": {
         "direction": "right",
         "speed": 5,
@@ -1704,139 +1961,9 @@
         "rounded": false
       }
     },
-    "scrolling-text-1": {
-      "type": "scrolling-text",
-      "blocks": {
-        "image_eK6Ty9": {
-          "type": "image",
-          "name": "TCS Logo",
-          "settings": {
-            "image": "shopify://shop_images/TCS-LOGO.avif",
-            "outlet": "",
-            "cafe_name": "The Coastal Settlement",
-            "cafe_address": "200 Netheravon Rd, Singapore 508529",
-            "caption_font": "Dancing Script",
-            "address_font": "",
-            "caption_size": 22,
-            "address_size": 14,
-            "caption_width": 240,
-            "height": 80,
-            "link": "https://urban-merchant.com/collections/the-coastal-settlement",
-            "accessibility_info": "",
-            "external": false
-          }
-        },
-        "image_nb9iET": {
-          "type": "image",
-          "name": "Coolies Union Logo",
-          "settings": {
-            "image": "shopify://shop_images/Primary_Logo_black.avif",
-            "outlet": "",
-            "cafe_name": "Coolies' Union",
-            "cafe_address": "9 Duxton Hl, Singapore 089593",
-            "caption_font": "Dancing Script",
-            "address_font": "",
-            "caption_size": 22,
-            "address_size": 14,
-            "caption_width": 0,
-            "height": 80,
-            "link": "",
-            "accessibility_info": "",
-            "external": false
-          }
-        },
-        "image_jnj3f9": {
-          "type": "image",
-          "name": "Jiu Zhuang Logo",
-          "settings": {
-            "image": "shopify://shop_images/JZ-logo.webp",
-            "outlet": "",
-            "cafe_name": "Jiu Zhuang",
-            "cafe_address": "6D Dempsey Rd, Singapore 247664",
-            "caption_font": "Dancing Script",
-            "address_font": "",
-            "caption_size": 22,
-            "address_size": 14,
-            "caption_width": 240,
-            "height": 80,
-            "link": "",
-            "accessibility_info": "",
-            "external": false
-          }
-        },
-        "image_NRyHYq": {
-          "type": "image",
-          "name": "Vietnam Harvest Logo",
-          "settings": {
-            "image": "shopify://shop_images/VN-harvest-logo-black.png",
-            "outlet": "",
-            "cafe_name": "Vietnam Harvest",
-            "cafe_address": "246-248, Bùi Viện, Bến Thành, Hồ Chí Minh 70000, Vietnam",
-            "caption_font": "Dancing Script",
-            "address_font": "",
-            "caption_size": 22,
-            "address_size": 14,
-            "caption_width": 240,
-            "height": 80,
-            "link": "",
-            "accessibility_info": "",
-            "external": false
-          }
-        },
-        "text-1": {
-          "type": "text",
-          "disabled": true,
-          "settings": {
-            "text": "<em><strong>Play anything</strong></em>",
-            "text_size": 48,
-            "text_font": "body",
-            "highlighted_text": "stencil",
-            "highlighted_scribble": "circle"
-          }
-        },
-        "text-2": {
-          "type": "text",
-          "disabled": true,
-          "settings": {
-            "text": "<em><strong>Day-long comfort</strong></em>",
-            "text_size": 24,
-            "text_font": "body",
-            "highlighted_text": "stencil",
-            "highlighted_scribble": "circle"
-          }
-        }
-      },
-      "block_order": [
-        "image_eK6Ty9",
-        "image_nb9iET",
-        "image_jnj3f9",
-        "image_NRyHYq",
-        "text-1",
-        "text-2"
-      ],
-      "name": "Outet Location - Scrolling Text",
-      "settings": {
-        "direction": "left",
-        "speed": 20,
-        "grid_horizontal": 110,
-        "enable_twin": false,
-        "enable_parallax": false,
-        "enable_swipe_mobile": false,
-        "fade_edges": true,
-        "fade_width": 25,
-        "color_text": "",
-        "color_background": "",
-        "gradient_background": "",
-        "color_highlight": "",
-        "gradient_highlight": "",
-        "padding_top": 24,
-        "padding_bottom": 24,
-        "divider": false,
-        "rounded": false
-      }
-    },
     "blog-posts-collage": {
       "type": "blog-posts-collage",
+      "disabled": true,
       "settings": {
         "blog": "",
         "post_limit": 3,
@@ -1915,6 +2042,7 @@
         "timer_4kKK3R",
         "button_xRjaTE"
       ],
+      "disabled": true,
       "name": "t:sections.countdown-timer.name",
       "settings": {
         "transparent_header": false,
@@ -1987,6 +2115,7 @@
         "heading_wByfyA",
         "text_Gz6fzU"
       ],
+      "disabled": true,
       "name": "t:sections.images-with-text-overlay.name",
       "settings": {
         "transparent_header": false,
@@ -2030,11 +2159,12 @@
     "rich-text-2",
     "product-bundle",
     "shop-the-feed",
-    "countdown-timer",
     "shop-the-look",
+    "countdown-timer",
+    "image_with_text_overlay_6dVkWN",
+    "scrolling-text-1",
     "testimonials-banner",
     "scrolling-text-2",
-    "scrolling-text-1",
     "blog-posts-collage",
     "countdown_timer_MtciHm",
     "images_with_text_overlay_W9irdK"

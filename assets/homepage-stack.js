@@ -14,7 +14,7 @@
 (function () {
   var MIN_SCALE = 0.94;
   var THIRD_CARD_INDEX = 2;
-  var GAP_BELOW_HEADER = 0;
+  var GAP_BELOW_HEADER = 1;
   var SCROLL_EPSILON = 1;
 
   function init() {

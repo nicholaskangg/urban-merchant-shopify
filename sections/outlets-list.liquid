@@ -22,6 +22,8 @@
     overflow: hidden;
     aspect-ratio: var(--outlet-ratio, 4 / 3);
     background: rgb(var(--color-foreground) / 0.05);
+    /* Inherit the theme's product-card corner radius (Theme settings → Corners). */
+    border-radius: var(--card-radius);
   }
   #shopify-section-{{ section.id }} .outlet__media--adapt { aspect-ratio: auto; }
   #shopify-section-{{ section.id }} .outlet__img {
@@ -43,11 +45,14 @@
   /* Body */
   #shopify-section-{{ section.id }} .outlet__body { margin-top: 1.5rem; display: flex; flex-direction: column; }
   #shopify-section-{{ section.id }} .outlet__name {
+    /* Follow the theme's heading typography (Theme settings → Typography):
+       family, style, weight, letter-spacing and capitalization. Only the size
+       and tight card line-height are kept local. */
     font-family: var(--font-heading-family);
     font-style: var(--font-heading-style);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    font-weight: var(--font-heading-weight);
+    text-transform: var(--font-heading-text-transform);
+    letter-spacing: var(--font-heading-letter-spacing);
     font-size: clamp(1.05rem, 1.4vw, 1.35rem);
     line-height: 1.1;
   }
